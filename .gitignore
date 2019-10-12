@@ -17,7 +17,7 @@ Makefile.in
 # build
 src/*.o
 src/.dirstamp
-phex
+fatracer
 
 # test script
 test-driver
@@ -31,3 +31,6 @@ src/*.gcno
 
 # gdb
 .gdb_history
+
+# sample
+sample/*

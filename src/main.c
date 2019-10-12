@@ -1,8 +1,7 @@
 /*
  * main.c
  *
- * Print data to Hexadecimal (like 'xxd').
- *
+ * FAT tracer interface
  *
  * MIT License
  *
@@ -38,41 +37,23 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "print.h"
-
-size_t max(size_t a, size_t b) { return a > b ? a : b; }
-size_t min(size_t a, size_t b) { return a < b ? a : b; }
-
-/**
- * PRINT MODE
- * command mode(stdin mode, file input mode, dump save mode)
- */
-static enum
-{
-	/* no argument("phex"). STDIN as input. */
-	PHEX_STDINMODE,
-	/* one argument("phex FILE"). FILE as input */
-	PHEX_FILEMODE,
-	/* two argument("phex FILE1 FILE2") FILE1'dump store FILE2 */
-	PHEX_DUMPMODE
-} phex_mode;
-
+#include "fat12.h"
 
 /**
  * Special Option(no short option)
  */
 enum
 {
-	GETOPT_HELP_CHAR = (CHAR_MIN - 2),
-	GETOPT_VERSION_CHAR = (CHAR_MIN - 3)
+  GETOPT_HELP_CHAR = (CHAR_MIN - 2),
+  GETOPT_VERSION_CHAR = (CHAR_MIN - 3)
 };
 
 /* option data {"long name", needs argument, flags, "short name"} */
 static struct option const longopts[] =
 {
-	{"help",no_argument, NULL, GETOPT_HELP_CHAR},
-	{"version",no_argument, NULL, GETOPT_VERSION_CHAR},
-	{0,0,0,0}
+  {"help",no_argument, NULL, GETOPT_HELP_CHAR},
+  {"version",no_argument, NULL, GETOPT_VERSION_CHAR},
+  {0,0,0,0}
 };
 
 /**
@@ -81,18 +62,18 @@ static struct option const longopts[] =
  */
 void usage(int status)
 {
-	FILE *out;
-	switch (status) {
-	case CMDLINE_FAILURE:
-		out = stderr;
-		break;
-	default:
-		out = stdout;
-	}
-	fprintf(out, "Usage: %s [OPTION]... [FILE]\n",
-										PROGRAM_NAME);
+  FILE *out;
+  switch (status) {
+    case CMDLINE_FAILURE:
+      out = stderr;
+      break;
+    default:
+      out = stdout;
+  }
+  fprintf(out, "Usage: %s [OPTION]... [FILE]\n",
+      PROGRAM_NAME);
 
-	exit(status);
+  exit(status);
 }
 
 /**
@@ -102,26 +83,50 @@ void usage(int status)
  * @author:       program authoer
  */
 void version(const char *command_name, const char *version,
-			const char *author)
+    const char *author)
 {
-	FILE *out = stdout;
+  FILE *out = stdout;
 
-	fprintf(out, "%s %s\n", command_name, version);
-	fprintf(out, "Written by %s.\n", author);
+  fprintf(out, "%s %s\n", command_name, version);
+  fprintf(out, "Written by %s.\n", author);
 }
 
-/**
- * read_stdin - read stdin to output Hexadecimal.
- *
- * Return: 0 - success
- *         otherwise - error(show ERROR STATUS CODE)
- */
-int read_stdin(void)
+int fat_dump_reservedinfo(struct fat12_reserved_info *info, FILE *out)
 {
-	FILE *in = stdin;
-	FILE *f2;
+  fprintf(out, "%-28s: %x %x %x\n", "BootStrap",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
+  fprintf(out, "%-28s: %s\n", "OEM Name", info->BS_ORMName);
+  fprintf(out, "%-28s: %u\n", "Bytes per Sector", info->BPB_BytesPerSec);
+  fprintf(out, "%-28s: %u\n", "Sectors per cluster", info->BPB_SecPerClus);
+  fprintf(out, "%-28s: %u\n", "Reserved Sector", info->BPB_RevdSecCnt);
+  fprintf(out, "%-28s: %u\n", "FAT count", info->BPB_NumFATs);
+  fprintf(out, "%-28s: %u\n", "Root Directory entry count", info->BPB_RootEntCnt);
+  fprintf(out, "%-28s: %u\n", "Sector count in Volume", info->BPB_TotSec16);
+  fprintf(out, "%-28s: %u\n", "Media", info->BPB_Media);
+  fprintf(out, "%-28s: %u\n", "Sector count in FAT", info->BPB_FATSz16);
+  fprintf(out, "%-28s: %u\n", "Sector count in Track", info->BPB_SecPerTrk);
+  fprintf(out, "%-28s: %u\n", "Head count", info->BPB_NumHeads);
+  fprintf(out, "%-28s: %u\n", "Hidden sector count", info->BPB_HiddSec);
+  fprintf(out, "%-28s: %u\n", "Sector count in volume", info->BPB_TotSec32);
+}
 
-	return 0;
+int fat_load_reservedinfo(struct fat12_reserved_info *info, char *buf)
+{
+  size_t offset = 0;
+
+  __memcpy(&(info->BS_JmpBoot), buf, &offset, JmpBootSIZE);
+  __memcpy(&(info->BS_ORMName), buf, &offset, ORMNameSIZE);
+  __memcpy(&(info->BPB_BytesPerSec), buf, &offset, BytesPerSecSIZE);
+  __memcpy(&(info->BPB_SecPerClus), buf, &offset, SecPerClusSIZE);
+  __memcpy(&(info->BPB_RevdSecCnt), buf, &offset, RevdSecCntSIZE);
+  __memcpy(&(info->BPB_NumFATs), buf, &offset, NumFATsSIZE);
+  __memcpy(&(info->BPB_RootEntCnt), buf, &offset, RootEntCntSIZE);
+  __memcpy(&(info->BPB_TotSec16), buf, &offset, TotSec16SIZE);
+  __memcpy(&(info->BPB_Media), buf, &offset, MediaSIZE);
+  __memcpy(&(info->BPB_FATSz16), buf, &offset, FATSz16SIZE);
+  __memcpy(&(info->BPB_SecPerTrk), buf, &offset, SecPerTrkSIZE);
+  __memcpy(&(info->BPB_NumHeads), buf, &offset, NumHeadsSIZE);
+  __memcpy(&(info->BPB_HiddSec), buf, &offset, HiddSecSIZE);
+  __memcpy(&(info->BPB_TotSec32), buf, &offset, TotSec32SIZE);
 }
 
 /**
@@ -132,69 +137,27 @@ int read_stdin(void)
  */
 int read_file(const char *path)
 {
-	int err;
-	char *inbuf;
-	FILE *fin;
-	FILE *fout;
-	struct stat st;
-	size_t outsize;
-	size_t insize;
-	long size = sysconf(_SC_PAGESIZE);
-	size_t offset;
+  int err;
+  unsigned char resv_area[RESVAREA_SIZE + 1];
+  FILE *fin;
+  FILE *fout = stdout;
+  size_t count;
+  struct fat12_reserved_info resv_info = {0};
 
-	if(stat(path, &st)) {
-		perror("file doesn't get status.");
-		err = EXIT_FAILURE;
-		goto out;
-	}
-	insize = st.st_size;
-	size = min(size, insize);
+  if ((fin = fopen(path, "rb")) == NULL) {
+    perror("file open error");
+    err = EXIT_FAILURE;
+    goto out;
+  }
 
-	if ((fin = fopen(path, "rb")) == NULL) {
-		perror("file open error");
-		err = EXIT_FAILURE;
-		goto out;
-	}
+  count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin );
+  fat_load_reservedinfo(&resv_info, resv_area);
+  fat_dump_reservedinfo(&resv_info, fout);
 
-	if(fstat(STDOUT_FILENO, &st)) {
-		perror("file doesn't get status.");
-		err = EXIT_FAILURE;
-		goto fin_end;
-	}
-	outsize = st.st_size;
-
-	fout = stdout;
-
-	inbuf = malloc(insize * sizeof(*inbuf));
-	if (!inbuf) {
-		goto fout_end;
-	}
-
-	while (fgets(inbuf, size + 1, fin)) {
-		for (offset = 0; offset < size - 1; offset += BUFSIZE) {
-		char data[BUFSIZE + 1];
-		strncpy(data, inbuf + offset, BUFSIZE);
-		printmsg(data, BUFSIZE);
-		}
-	}
-
-	free(inbuf);
-fout_end:
 fin_end:
-	fclose(fin);
+  fclose(fin);
 out:
-	return err;
-}
-
-/**
- * dump_file - read file to output another file.
- *
- * Return: 0 - success
- *         otherwise - error(show ERROR STATUS CODE)
- */
-int dump_file(const char *inpath, const char *outpath)
-{
-	return 0;
+  return err;
 }
 
 /**
@@ -204,74 +167,38 @@ int dump_file(const char *inpath, const char *outpath)
  */
 int main(int argc, char *argv[])
 {
-	int opt;
-	int longindex;
-	int n_files;
-	bool infile = false;
-	int fd = 0;
-	size_t len;
-	char data[BUFSIZE + 1];
+  int opt;
+  int longindex;
+  int n_files;
+  bool infile = false;
 
-	/**
-	 * Initialize Phase.
-	 * parse option, argument. set flags.
-	 */
-	while ((opt = getopt_long(argc, argv,
-		"abc:g:iEpul:s:r",
-		longopts, &longindex)) != -1) {
-		switch (opt) {
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'g':
-		case 'i':
-		case 'E':
-		case 'p':
-		case 'u':
-		case 'l':
-		case 's':
-		case 'r':
-		case GETOPT_HELP_CHAR:
-			usage(EXIT_SUCCESS);
-			break;
-		case GETOPT_VERSION_CHAR:
-			version(PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_AUTHOR);
-			exit(EXIT_SUCCESS);
-			break;
-		default:
-			usage(CMDLINE_FAILURE);
-		}
-	}
+  /**
+   * Initialize Phase.
+   * parse option, argument. set flags.
+   */
+  while ((opt = getopt_long(argc, argv,
+          "o:",
+          longopts, &longindex)) != -1) {
+    switch (opt) {
+      case 'o':
+      case GETOPT_HELP_CHAR:
+        usage(EXIT_SUCCESS);
+        break;
+      case GETOPT_VERSION_CHAR:
+        version(PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_AUTHOR);
+        exit(EXIT_SUCCESS);
+        break;
+      default:
+        usage(CMDLINE_FAILURE);
+    }
+  }
 
-	n_files = argc - optind;
-	switch (n_files) {
-	case 0:
-		phex_mode = PHEX_STDINMODE;
-		read_stdin();
-		break;
-	case 1:
-		phex_mode = PHEX_FILEMODE;
-		read_file(argv[optind]);
-		break;
-	case 2:
-		phex_mode = PHEX_DUMPMODE;
-		dump_file(argv[optind], argv[optind + 1]);
-		break;
-	default:
-		usage(CMDLINE_FAILURE);
-	}
+  n_files = argc - optind;
+  if (!n_files) {
+    usage(CMDLINE_FAILURE);
+    exit(EXIT_FAILURE);
+  }
 
-	/**
-	 * Main Phase.
-	 * read input file(or stdio), output data.
-	while ((len = read(fd, data, BUFSIZE)) > 0) {
-		data[len] = '\0';
-		printmsg(data, len);
-	}
-
-	 * Terminate Phase
-	if (infile)
-		close(fd);
-	*/
-	return 0;
+  read_file(argv[optind]);
+  return 0;
 }

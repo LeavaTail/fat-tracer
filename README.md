@@ -1,9 +1,9 @@
-# pHex
-[![Build Status](https://travis-ci.org/LeavaTail/pHex.svg?branch=master)](https://travis-ci.org/LeavaTail/pHex)
-[![codecov](https://codecov.io/gh/LeavaTail/pHex/branch/master/graph/badge.svg)](https://codecov.io/gh/LeavaTail/pHex)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/92896c427d5e4520863485ce76dfa791)](https://www.codacy.com/app/LeavaTail/pHex?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LeavaTail/pHex&amp;utm_campaign=Badge_Grade)
+# FAT-tracer
+[![Build Status](https://travis-ci.org/LeavaTail/fat-tracer.svg?branch=master)](https://travis-ci.org/LeavaTail/fat-tracer)
+[![codecov](https://codecov.io/gh/LeavaTail/fat-tracer/branch/master/graph/badge.svg)](https://codecov.io/gh/LeavaTail/fat-tracer)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2eb72d5997cd4a5585c4fb163859ad23)](https://www.codacy.com/manual/LeavaTail/fat-tracer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LeavaTail/fat-tracer&amp;utm_campaign=Badge_Grade)
 
-`phex`(Print HEXadecimal) make a hexdump or do the reverse that referenced `xxd`.
+`FAT tracer` print out a hexdump or do the reverse that referenced `xxd`.
 
 ## Description
 `phex` creates a hex dump of a given file or standard input.
