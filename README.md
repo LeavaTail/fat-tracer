@@ -38,7 +38,7 @@ Data Directory Sector       : 00004600 - 00018fff
 
 /:
 FileName                    : DIRECTOR
-File Attribute              : 10
+File Attribute              : DIR
 Smaller information         : 0
 Create Time (ms)            : 2019-10-14 07:24:20.18
 Access Time (ms)            : 2019-10-14 00:00:00.00
@@ -47,7 +47,7 @@ First Sector                : 00 03
 File size                   : 0
 
 FileName                    : FILE1234TXT
-File Attribute              : 20
+File Attribute              : ARCH
 Smaller information         : 0
 Create Time (ms)            : 2019-10-14 07:24:29.41
 Access Time (ms)            : 2019-10-14 00:00:00.00

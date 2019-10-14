@@ -79,6 +79,7 @@ static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_
  */
 #define RESVAREA_SIZE 512
 #define DENTRY_SIZE 32
+#define ATTR_ONELINE 36
 #define FAT16_CLUSTERS 4096
 #define FAT32_CLUSTERS 65526
 
@@ -243,6 +244,16 @@ enum {
   MONTHSHIFT = 5,
   HOURSHIFT = 11,
   MINSHIFT = 5,
+};
+
+enum {
+  ATTR_READ_ONLY = 0x01,
+  ATTR_HIDDEN = 0x02,
+  ATTR_SYSTEM = 0x04,
+  ATTR_VOLUME_ID = 0x08,
+  ATTR_DIRECTORY = 0x10,
+  ATTR_ARCHIVE = 0x20,
+  ATTR_LONG_FILE_NAME = 0x0f,
 };
 
 /**

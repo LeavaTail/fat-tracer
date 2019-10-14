@@ -122,6 +122,27 @@ int fat_timeformat(struct tm *t, u_int16_t time)
   t->tm_hour = h;
 }
 
+int fat_attrformat(char *buf, unsigned char attr)
+{
+  if (attr & ATTR_LONG_FILE_NAME) {
+    strcat(buf ,"LFN ");
+    return 0;
+  }
+
+  if (attr & ATTR_READ_ONLY)
+    strcat(buf ,"RO ");
+  if (attr & ATTR_HIDDEN)
+    strcat(buf ,"HIDDEN ");
+  if (attr & ATTR_SYSTEM)
+    strcat(buf ,"SYS ");
+  if (attr & ATTR_VOLUME_ID)
+    strcat(buf ,"VOLUME ");
+  if (attr & ATTR_DIRECTORY)
+    strcat(buf ,"DIR ");
+  if (attr & ATTR_ARCHIVE)
+    strcat(buf ,"ARCH ");
+}
+
 bool check_dentryfree(const char *buf)
 {
   if (!buf)
@@ -173,6 +194,7 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
 
 int fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
+  char attrbuf[ATTR_ONELINE] = {0};
   char ret[DENTRY_SIZE + 1] = {0};
   struct tm mtime, atime, ctime;
   u_int16_t msec = 0;
@@ -182,9 +204,10 @@ int fat_dump_dentry(struct fat_dentry *info, FILE *out)
   fat_dateformat(&atime, info->DIR_LstAccDate);
   fat_timeformat(&ctime, info->DIR_CrtTime);
   fat_dateformat(&ctime, info->DIR_CrtDate);
+  fat_attrformat(attrbuf, info->DIR_Attr);
 
   fprintf(out, "%-28s: %s\n", "FileName", setcharc(info->IR_Name, ret, NameSIZE));
-  fprintf(out, "%-28s: %x\n", "File Attribute", info->DIR_Attr);
+  fprintf(out, "%-28s: %s\n", "File Attribute", attrbuf);
   fprintf(out, "%-28s: %x\n", "Smaller information", info->DIR_NTRes);
   msec = info->DIR_CrtTimeTenth;
   fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Create Time (ms)",
