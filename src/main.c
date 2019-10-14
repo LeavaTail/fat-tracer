@@ -145,6 +145,15 @@ int read_file(const char *path)
   FILE *fout = stdout;
   size_t count;
   size_t offset = 0;
+  u_int16_t sector;
+  u_int32_t secsPerFat;
+  u_int32_t totSec;
+  u_int16_t FatStartSector;
+  u_int32_t FatSectors;
+  u_int32_t RootDirStartSector;
+  u_int32_t RootDirSectors;
+  u_int32_t DataStartSector;
+  u_int32_t DataSectors;
   struct fat_reserved_info resv_info = {0};
 
   if ((fin = fopen(path, "rb")) == NULL) {
@@ -156,13 +165,33 @@ int read_file(const char *path)
   count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin );
   offset = fat_load_reservedinfo(&resv_info, resv_area);
   fat_dump_reservedinfo(&resv_info, fout);
+  sector = resv_info.BPB_BytesPerSec;
 
   if (is_fat32format(&resv_info)) {
     fat32_load_reservedinfo(&resv_info, resv_area, offset);
+    secsPerFat = 0;
+    totSec = 0;
   } else {
     fat12_load_reservedinfo(&resv_info, resv_area, offset);
     fat12_dump_reservedinfo(&resv_info, fout);
+    secsPerFat = resv_info.BPB_FATSz16;
+    totSec = resv_info.BPB_TotSec16;
   }
+
+  FatStartSector = resv_info.BPB_RevdSecCnt;
+  FatSectors = secsPerFat * resv_info.BPB_NumFATs;
+  RootDirStartSector = FatStartSector + FatSectors;
+  RootDirSectors = (32 * resv_info.BPB_RootEntCnt + resv_info.BPB_BytesPerSec - 1)
+                   / resv_info.BPB_BytesPerSec;
+  DataStartSector = RootDirStartSector + RootDirSectors;
+  DataSectors = totSec - DataStartSector;
+
+  fprintf(fout, "%-28s: %08x - %08x\n", "Fat Table Sector", FatStartSector * sector,
+          FatStartSector * sector +  FatSectors * sector - 1);
+  fprintf(fout, "%-28s: %08x - %08x\n", "Root Directory Sector", RootDirStartSector * sector,
+          RootDirStartSector * sector +  RootDirSectors * sector - 1);
+  fprintf(fout, "%-28s: %08x - %08x\n", "Data Directory Sector", DataStartSector * sector,
+          DataStartSector * sector +  DataSectors * sector - 1);
 
 fin_end:
   fclose(fin);
