@@ -3,7 +3,7 @@ AM_CFLAGS   = -O2 -Wall
 AM_CXXFLAGS = $(CFLAGS)
 
 bin_PROGRAMS = fatracer
-fatracer_SOURCES = src/main.c src/fat12_common.c src/fat32_common.c
+fatracer_SOURCES = src/main.c src/fat12_common.c src/fat16_common.c src/fat32_common.c
 if DEBUG
 fatracer_CFLAGS = -O0 -g3 -coverage -Wall -DFATRACER_DEBUG
 else

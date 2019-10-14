@@ -163,11 +163,41 @@ struct fat32_reserved_info {
   unsigned char BS_BootSign[BootSignSIZE];
 };
 
+enum Fat12Entry
+{
+  FAT12_UNUSED = 0x000,
+  FAT12_RESERVED = 0x001,
+  FAT12_BADCLUSTER = 0xFF7,
+  FAT12_DATAEND = 0xFF8,
+};
+
+enum Fat16Entry
+{
+  FAT16_UNUSED = 0x0000,
+  FAT16_RESERVED = 0x0001,
+  FAT16_BADCLUSTER = 0xFFF7,
+  FAT16_DATAEND = 0xFFF8,
+};
+
+enum Fat32Entry
+{
+  FAT32_UNUSED = 0x00000000,
+  FAT32_RESERVED = 0x00000001,
+  FAT32_BADCLUSTER = 0xFFFFFFF7,
+  FAT32_DATAEND = 0xFFFFFFF8,
+};
+
 /**
  * FAT12 structure
  */
 int fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
 int fat12_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
+
+/**
+ * FAT16 structure
+ */
+int fat16_dump_fattable(void *);
+int fat16_load_fattable(void *);
 
 /**
  * FAT32 structure
