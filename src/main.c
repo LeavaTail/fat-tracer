@@ -131,6 +131,45 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
   return offset;
 }
 
+int fat_dump_dentry(struct fat_dentry *info, FILE *out)
+{
+  char ret[DENTRY_SIZE + 1] = {0};
+
+  fprintf(out, "%-28s: %s\n", "FileName", setcharc(info->IR_Name, ret, NameSIZE));
+  fprintf(out, "%-28s: %x\n", "File Attribute", info->DIR_Attr);
+  fprintf(out, "%-28s: %x\n", "Smaller information", info->DIR_NTRes);
+  fprintf(out, "%-28s: %x\n", "second time (0 ms - 199 ms)", info->DIR_CrtTimeTenth);
+  fprintf(out, "%-28s: %x\n", "Create time (2 s - )", info->DIR_CrtTime);
+  fprintf(out, "%-28s: %x\n", "Create date", info->DIR_CrtDate);
+  fprintf(out, "%-28s: %x\n", "Access date", info->DIR_LstAccDate);
+  fprintf(out, "%-28s: %02x %02x\n", "First Sector", info->DIR_FstClusHI,
+                                                 info->DIR_FstClusLO);
+  fprintf(out, "%-28s: %x\n", "Modifed time", info->DIR_WrtTime);
+  fprintf(out, "%-28s: %x\n", "Modifed Date", info->DIR_WrtDate);
+  fprintf(out, "%-28s: %x\n", "File size", info->DIR_FileSize);
+}
+
+
+int fat_load_dentry(struct fat_dentry *dentry, const void *buf)
+{
+  size_t offset = 0;
+
+  __memcpy(&(dentry->IR_Name), buf, &offset, NameSIZE);
+  __memcpy(&(dentry->DIR_Attr), buf, &offset, AttrSIZE);
+  __memcpy(&(dentry->DIR_NTRes), buf, &offset, NTResSIZE);
+  __memcpy(&(dentry->DIR_CrtTimeTenth), buf, &offset, CrtTimeTenthSIZE);
+  __memcpy(&(dentry->DIR_CrtTime), buf, &offset, CrtTimeSIZE);
+  __memcpy(&(dentry->DIR_CrtDate), buf, &offset, CrtDateSIZE);
+  __memcpy(&(dentry->DIR_LstAccDate), buf, &offset, LstAccDateSIZE);
+  __memcpy(&(dentry->DIR_FstClusHI), buf, &offset, FstClusHISIZE);
+  __memcpy(&(dentry->DIR_WrtTime), buf, &offset, WrtTimeSIZE);
+  __memcpy(&(dentry->DIR_WrtDate), buf, &offset, WrtDateSIZE);
+  __memcpy(&(dentry->DIR_FstClusLO), buf, &offset, FstClusLOSIZE);
+  __memcpy(&(dentry->DIR_FileSize), buf, &offset, FileSizeSIZE);
+
+  return offset;
+}
+
 /**
  * read_file - read file to output Hexadecimal.
  *
@@ -141,6 +180,9 @@ int read_file(const char *path)
 {
   int err;
   unsigned char resv_area[RESVAREA_SIZE + 1];
+  unsigned char *fat_area;
+  unsigned char *root_area;
+  unsigned char *data_area;
   FILE *fin;
   FILE *fout = stdout;
   size_t count;
@@ -156,7 +198,9 @@ int read_file(const char *path)
   u_int32_t RootDirSectors;
   u_int32_t DataStartSector;
   u_int32_t DataSectors;
+
   struct fat_reserved_info resv_info = {0};
+  struct fat_dentry dentry = {0};
 
   if ((fin = fopen(path, "rb")) == NULL) {
     perror("file open error");
@@ -164,7 +208,7 @@ int read_file(const char *path)
     goto out;
   }
 
-  count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin );
+  count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin);
   offset = fat_load_reservedinfo(&resv_info, resv_area);
   fat_dump_reservedinfo(&resv_info, fout);
   sector = resv_info.BPB_BytesPerSec;
@@ -203,6 +247,20 @@ int read_file(const char *path)
     fstype = FAT16_FILESYSTEM;
   else
     fstype = FAT32_FILESYSTEM;
+
+  fat_area = malloc(FatSectors * sector);
+  fseek(fin, FatStartSector * sector ,SEEK_SET);
+  count = fread(fat_area, sizeof(fat_area[0]), FatSectors * sector, fin);
+  free(fat_area);
+
+  fprintf(fout, "\n%s:\n", "/");
+  root_area = malloc(RootDirSectors * sector);
+  fseek(fin, RootDirStartSector * sector, SEEK_SET);
+  count = fread(root_area, sizeof(root_area[0]), RootDirSectors * sector, fin);
+  fat_load_dentry(&dentry, root_area);
+  fat_dump_dentry(&dentry, fout);
+  free(root_area);
+
 
 fin_end:
   fclose(fin);

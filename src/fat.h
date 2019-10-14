@@ -78,6 +78,7 @@ static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_
  * FAT DEFINATION
  */
 #define RESVAREA_SIZE 512
+#define DENTRY_SIZE 32
 #define FAT16_CLUSTERS 4096
 #define FAT32_CLUSTERS 65526
 
@@ -185,6 +186,36 @@ enum Fat32Entry
   FAT32_RESERVED = 0x00000001,
   FAT32_BADCLUSTER = 0xFFFFFFF7,
   FAT32_DATAEND = 0xFFFFFFF8,
+};
+
+enum {
+  NameSIZE  = 11,
+  AttrSIZE = 1,
+  NTResSIZE = 1,
+  CrtTimeTenthSIZE = 1,
+  CrtTimeSIZE = 2,
+  CrtDateSIZE = 2,
+  LstAccDateSIZE = 2,
+  FstClusHISIZE = 2,
+  WrtTimeSIZE = 2,
+  WrtDateSIZE = 2,
+  FstClusLOSIZE = 2,
+  FileSizeSIZE = 4,
+};
+
+struct fat_dentry {
+  unsigned char IR_Name[NameSIZE];
+  unsigned char DIR_Attr;
+  unsigned char DIR_NTRes;
+  unsigned char DIR_CrtTimeTenth;
+  u_int16_t DIR_CrtTime;
+  u_int16_t DIR_CrtDate;
+  u_int16_t DIR_LstAccDate;
+  u_int16_t DIR_FstClusHI;
+  u_int16_t DIR_WrtTime;
+  u_int16_t DIR_WrtDate;
+  u_int16_t DIR_FstClusLO;
+  u_int32_t DIR_FileSize;
 };
 
 /**
