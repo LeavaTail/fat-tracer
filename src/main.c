@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -91,6 +92,36 @@ void version(const char *command_name, const char *version,
   fprintf(out, "Written by %s.\n", author);
 }
 
+int fat_dateformat(struct tm *t, u_int16_t date)
+{
+  unsigned char y;
+  unsigned char m;
+  unsigned char d;
+
+  y = (date & YEARMASK) >> YEARSHIFT;
+  m = (date & MONTHMASK) >> MONTHSHIFT;
+  d = (date & DAYMASK);
+
+  t->tm_year = y;
+  t->tm_mon = m;
+  t->tm_mday = d;
+}
+
+int fat_timeformat(struct tm *t, u_int16_t time)
+{
+  unsigned char h;
+  unsigned char m;
+  unsigned char s;
+
+  h = (time & HOURMASK) >> HOURSHIFT;
+  m = (time & MINMASK) >> MINSHIFT;
+  s = (time & SECMASK);
+
+  t->tm_sec = s;
+  t->tm_min = m;
+  t->tm_hour = h;
+}
+
 int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   fprintf(out, "%-28s: %x %x %x\n", "BootStrap instruction",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
@@ -134,18 +165,33 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
 int fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
   char ret[DENTRY_SIZE + 1] = {0};
+  struct tm mtime, atime, ctime;
+  u_int16_t msec = 0;
+
+  fat_timeformat(&mtime, info->DIR_WrtTime);
+  fat_dateformat(&mtime, info->DIR_WrtDate);
+  fat_dateformat(&atime, info->DIR_LstAccDate);
+  fat_timeformat(&ctime, info->DIR_CrtTime);
+  fat_dateformat(&ctime, info->DIR_CrtDate);
 
   fprintf(out, "%-28s: %s\n", "FileName", setcharc(info->IR_Name, ret, NameSIZE));
   fprintf(out, "%-28s: %x\n", "File Attribute", info->DIR_Attr);
   fprintf(out, "%-28s: %x\n", "Smaller information", info->DIR_NTRes);
-  fprintf(out, "%-28s: %x\n", "second time (0 ms - 199 ms)", info->DIR_CrtTimeTenth);
-  fprintf(out, "%-28s: %x\n", "Create time (2 s - )", info->DIR_CrtTime);
-  fprintf(out, "%-28s: %x\n", "Create date", info->DIR_CrtDate);
-  fprintf(out, "%-28s: %x\n", "Access date", info->DIR_LstAccDate);
+  msec = info->DIR_CrtTimeTenth;
+  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Create Time (ms)",
+                1980 + ctime.tm_year, ctime.tm_mon, ctime.tm_mday,
+                ctime.tm_hour, ctime.tm_min,
+                (ctime.tm_sec * 2) + (msec / 100),
+                msec % 100);
+  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Access Time (ms)",
+                1980 + atime.tm_year, atime.tm_mon, atime.tm_mday,
+                atime.tm_hour, atime.tm_min, atime.tm_sec * 2, 0);
+  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Modify Time (ms)",
+                1980 + mtime.tm_year, mtime.tm_mon, mtime.tm_mday,
+                mtime.tm_hour, mtime.tm_min, mtime.tm_sec * 2, 0);
+
   fprintf(out, "%-28s: %02x %02x\n", "First Sector", info->DIR_FstClusHI,
                                                  info->DIR_FstClusLO);
-  fprintf(out, "%-28s: %x\n", "Modifed time", info->DIR_WrtTime);
-  fprintf(out, "%-28s: %x\n", "Modifed Date", info->DIR_WrtDate);
   fprintf(out, "%-28s: %x\n", "File size", info->DIR_FileSize);
 }
 

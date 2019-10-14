@@ -219,6 +219,33 @@ struct fat_dentry {
 };
 
 /**
+ * Time format
+ * 15                    0
+ * -----------------------
+ * | HHHHHMMM | MMMSSSSS |
+ * -----------------------
+ *
+ * Date format
+ * 15                    0
+ * -----------------------
+ * | YYYYYYYM | MMMDDDDD |
+ * -----------------------
+ */
+enum {
+  HOURMASK = 0xf800,
+  MINMASK = 0x07e0,
+  SECMASK  = 0x001f,
+  YEARMASK = 0xef00,
+  MONTHMASK = 0x01e0,
+  DAYMASK = 0x001f,
+
+  YEARSHIFT = 9,
+  MONTHSHIFT = 5,
+  HOURSHIFT = 11,
+  MINSHIFT = 5,
+};
+
+/**
  * FAT12 structure
  */
 int fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
