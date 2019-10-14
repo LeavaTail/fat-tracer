@@ -32,6 +32,28 @@ Volume Label                : NO NAME
 FileSystem Type             : FAT12
 BootStrap(Dep systems)      : ...[|.".t.V.......^..2.......This is not a bootable disk.  Please insert a bootable floppy and..press any key to try again ... .................................................................................................................................................................................................................................................................................................................................
 Boot Signature              : 55aa
+Fat Table Sector            : 00000200 - 000005ff
+Root Directory Sector       : 00000600 - 000045ff
+Data Directory Sector       : 00004600 - 00018fff
+
+/:
+FileName                    : DIRECTOR
+File Attribute              : 10
+Smaller information         : 0
+Create Time (ms)            : 2019-10-14 07:24:20.18
+Access Time (ms)            : 2019-10-14 00:00:00.00
+Modify Time (ms)            : 2019-10-14 07:24:20.00
+First Sector                : 00 03
+File size                   : 0
+
+FileName                    : FILE1234TXT
+File Attribute              : 20
+Smaller information         : 0
+Create Time (ms)            : 2019-10-14 07:24:29.41
+Access Time (ms)            : 2019-10-14 00:00:00.00
+Modify Time (ms)            : 2019-10-14 07:24:28.00
+First Sector                : 00 00
+File size                   : 0
 ```
 
 ## Requirement

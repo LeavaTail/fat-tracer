@@ -122,6 +122,15 @@ int fat_timeformat(struct tm *t, u_int16_t time)
   t->tm_hour = h;
 }
 
+bool check_dentryfree(const char *buf)
+{
+  if (!buf)
+    return true;
+  if ((buf[0] == 0xe5) || (buf[0] == 0x00))
+    return true;
+  return false;
+}
+
 int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   fprintf(out, "%-28s: %x %x %x\n", "BootStrap instruction",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
@@ -225,6 +234,7 @@ int fat_load_dentry(struct fat_dentry *dentry, const void *buf)
 int read_file(const char *path)
 {
   int err;
+  int secv;
   unsigned char resv_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
   unsigned char *root_area;
@@ -300,11 +310,16 @@ int read_file(const char *path)
   free(fat_area);
 
   fprintf(fout, "\n%s:\n", "/");
-  root_area = malloc(RootDirSectors * sector);
+  root_area = malloc(sizeof(struct fat_dentry) + 1);
   fseek(fin, RootDirStartSector * sector, SEEK_SET);
-  count = fread(root_area, sizeof(root_area[0]), RootDirSectors * sector, fin);
-  fat_load_dentry(&dentry, root_area);
-  fat_dump_dentry(&dentry, fout);
+  for(secv = 0; secv < RootDirSectors * sector; secv += sizeof(struct fat_dentry)) {
+    count = fread(root_area, sizeof(root_area[0]), sizeof(struct fat_dentry), fin);
+    if (check_dentryfree(root_area))
+      continue;
+    fat_load_dentry(&dentry, root_area);
+    fat_dump_dentry(&dentry, fout);
+    putchar('\n');
+  }
   free(root_area);
 
 
