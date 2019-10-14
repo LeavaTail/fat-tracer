@@ -1,3 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "Hello, World!"
+. tests/init.sh
+initialize
+mkdir sample/mnt/dir1
+touch sample/mnt/file1
+cleanup
+./fatracer sample/fat.img
