@@ -96,6 +96,7 @@ enum {
   NumHeadsSIZE = 2,
   HiddSecSIZE = 4,
   TotSec32SIZE = 4,
+  /* FAT12/16 */
   DrvNumSIZE = 1,
   Reserved1SIZE = 1,
   BootSigSIZE = 1,
@@ -104,6 +105,15 @@ enum {
   FilSysTypeSIZE = 8,
   BootCodeSIZE = 448,
   BootSignSIZE = 2,
+  /* FAT32 */
+  FATSz32SIZE = 4,
+  ExtFlagsSIZE = 2,
+  FSVerSIZE = 2,
+  RootClusSIZE = 4,
+  FSInfoSIZE = 2,
+  BkBootSecSIZE = 2,
+  ReservedSIZE = 12,
+  BootCode32SIZE = 420,
 };
 
 struct fat_reserved_info {
@@ -132,6 +142,24 @@ struct fat12_reserved_info {
   unsigned char BS_VolLab[VolLabSIZE];
   unsigned char BS_FilSysType[FilSysTypeSIZE];
   unsigned char BS_BootCode[BootCodeSIZE];
+  unsigned char BS_BootSign[BootSignSIZE];
+};
+
+struct fat32_reserved_info {
+  u_int32_t BPB_FATSz32;
+  unsigned char BPB_ExtFlags[ExtFlagsSIZE];
+  unsigned char BPB_FSVer[FSVerSIZE];
+  u_int32_t BPB_RootClus;
+  u_int16_t BPB_FSInfo;
+  u_int16_t BPB_BkBootSec;
+  unsigned char BPB_Reserved[ReservedSIZE];
+  unsigned char BS_DrvNum;
+  u_int8_t  BS_Reserved1;
+  unsigned char BS_BootSig;
+  unsigned char BS_VolID[VolIDSIZE];
+  unsigned char BS_VolLab[VolLabSIZE];
+  unsigned char BS_FilSysType[FilSysTypeSIZE];
+  unsigned char BS_BootCode32[BootCode32SIZE];
   unsigned char BS_BootSign[BootSignSIZE];
 };
 

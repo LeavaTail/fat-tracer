@@ -46,9 +46,44 @@ bool is_fat32format(struct fat_reserved_info *info)
 
 int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
+  char ret[RESVAREA_SIZE + 1] = {0};
+  struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
+
+  fprintf(out, "%-28s: %x\n", "Sectors Per FAT table", fat32_info->BPB_FATSz32);
+  fprintf(out, "%-28s: %x%x\n", "Active flags", fat32_info->BPB_ExtFlags[0], fat32_info->BPB_ExtFlags[1]);
+  fprintf(out, "%-28s: %x %x\n", "FAT32 Volume version", fat32_info->BPB_FSVer[0], fat32_info->BPB_FSVer[1]);
+  fprintf(out, "%-28s: %x\n", "Root Directory First sector", fat32_info->BPB_RootClus);
+  fprintf(out, "%-28s: %x\n", "FSINFO sector", fat32_info->BPB_FSInfo);
+  fprintf(out, "%-28s: %x\n", "Backup Boot sector", fat32_info->BPB_BkBootSec);
+  fprintf(out, "%-28s: %x\n", "BootStrap", fat32_info->BS_DrvNum);
+  fprintf(out, "%-28s: %s\n", "Reserved(FAT32)", setcharc(fat32_info->BPB_Reserved, ret, ReservedSIZE));
+  fprintf(out, "%-28s: %x\n", "BootStrap", fat32_info->BS_DrvNum);
+  fprintf(out, "%-28s: %x\n", "Reserved",  fat32_info->BS_Reserved1);
+  fprintf(out, "%-28s: %x\n", "Boot Signature",  fat32_info->BS_BootSig);
+  fprintf(out, "%-28s: %s\n", "Volume ID", setcharx(fat32_info->BS_VolID, ret, VolIDSIZE));
+  fprintf(out, "%-28s: %s\n", "Volume Label", setcharc(fat32_info->BS_VolLab, ret, VolLabSIZE));
+  fprintf(out, "%-28s: %s\n", "FileSystem Type", setcharc(fat32_info->BS_FilSysType, ret, FilSysTypeSIZE));
+  fprintf(out, "%-28s: %s\n", "BootStrap(Dep systems)",  setcharc(fat32_info->BS_BootCode32, ret, BootCode32SIZE));
+  fprintf(out, "%-28s: %x%x\n", "Boot Signature",  fat32_info->BS_BootSign[0],
+          fat32_info->BS_BootSign[1]);
 }
 
 int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)
 {
-
+  struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
+  __memcpy(&(fat32_info->BPB_FATSz32), buf, &offset, FATSz32SIZE);
+  __memcpy(&(fat32_info->BPB_ExtFlags), buf, &offset, ExtFlagsSIZE);
+  __memcpy(&(fat32_info->BPB_FSVer), buf, &offset, FSVerSIZE);
+  __memcpy(&(fat32_info->BPB_RootClus), buf, &offset, RootClusSIZE);
+  __memcpy(&(fat32_info->BPB_FSInfo), buf, &offset, FSInfoSIZE);
+  __memcpy(&(fat32_info->BPB_BkBootSec), buf, &offset, BkBootSecSIZE);
+  __memcpy(&(fat32_info->BPB_Reserved), buf, &offset, ReservedSIZE);
+  __memcpy(&(fat32_info->BS_DrvNum), buf, &offset, DrvNumSIZE);
+  __memcpy(&(fat32_info->BS_Reserved1), buf, &offset, Reserved1SIZE);
+  __memcpy(&(fat32_info->BS_BootSig), buf, &offset, BootSigSIZE);
+  __memcpy(&(fat32_info->BS_VolID), buf, &offset, VolIDSIZE);
+  __memcpy(&(fat32_info->BS_VolLab), buf, &offset, VolLabSIZE);
+  __memcpy(&(fat32_info->BS_FilSysType), buf, &offset, FilSysTypeSIZE);
+  __memcpy(&(fat32_info->BS_BootCode32), buf, &offset, BootCode32SIZE);
+  __memcpy(&(fat32_info->BS_BootSign), buf, &offset, BootSignSIZE);
 }

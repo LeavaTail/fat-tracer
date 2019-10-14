@@ -171,8 +171,9 @@ int read_file(const char *path)
 
   if (is_fat32format(&resv_info)) {
     fat32_load_reservedinfo(&resv_info, resv_area, offset);
-    secsPerFat = 0;
-    totSec = 0;
+    fat32_dump_reservedinfo(&resv_info, fout);
+    secsPerFat = ((struct fat32_reserved_info *)(resv_info.reserved1))->BPB_FATSz32;
+    totSec = resv_info.BPB_TotSec32;
   } else {
     fat12_load_reservedinfo(&resv_info, resv_area, offset);
     fat12_dump_reservedinfo(&resv_info, fout);
