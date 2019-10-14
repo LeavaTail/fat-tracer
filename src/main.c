@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "fat12.h"
+#include "fat.h"
 
 /**
  * Special Option(no short option)
@@ -91,9 +91,9 @@ void version(const char *command_name, const char *version,
   fprintf(out, "Written by %s.\n", author);
 }
 
-int fat_dump_reservedinfo(struct fat12_reserved_info *info, FILE *out)
+int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  fprintf(out, "%-28s: %x %x %x\n", "BootStrap",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
+  fprintf(out, "%-28s: %x %x %x\n", "BootStrap instruction",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
   fprintf(out, "%-28s: %s\n", "OEM Name", info->BS_ORMName);
   fprintf(out, "%-28s: %u\n", "Bytes per Sector", info->BPB_BytesPerSec);
   fprintf(out, "%-28s: %u\n", "Sectors per cluster", info->BPB_SecPerClus);
@@ -109,7 +109,7 @@ int fat_dump_reservedinfo(struct fat12_reserved_info *info, FILE *out)
   fprintf(out, "%-28s: %u\n", "Sector count in volume", info->BPB_TotSec32);
 }
 
-int fat_load_reservedinfo(struct fat12_reserved_info *info, char *buf)
+int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
 {
   size_t offset = 0;
 
@@ -127,6 +127,8 @@ int fat_load_reservedinfo(struct fat12_reserved_info *info, char *buf)
   __memcpy(&(info->BPB_NumHeads), buf, &offset, NumHeadsSIZE);
   __memcpy(&(info->BPB_HiddSec), buf, &offset, HiddSecSIZE);
   __memcpy(&(info->BPB_TotSec32), buf, &offset, TotSec32SIZE);
+
+  return offset;
 }
 
 /**
@@ -142,7 +144,8 @@ int read_file(const char *path)
   FILE *fin;
   FILE *fout = stdout;
   size_t count;
-  struct fat12_reserved_info resv_info = {0};
+  size_t offset = 0;
+  struct fat_reserved_info resv_info = {0};
 
   if ((fin = fopen(path, "rb")) == NULL) {
     perror("file open error");
@@ -151,8 +154,15 @@ int read_file(const char *path)
   }
 
   count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin );
-  fat_load_reservedinfo(&resv_info, resv_area);
+  offset = fat_load_reservedinfo(&resv_info, resv_area);
   fat_dump_reservedinfo(&resv_info, fout);
+
+  if (is_fat32format(&resv_info)) {
+    fat32_load_reservedinfo(&resv_info, resv_area, offset);
+  } else {
+    fat12_load_reservedinfo(&resv_info, resv_area, offset);
+    fat12_dump_reservedinfo(&resv_info, fout);
+  }
 
 fin_end:
   fclose(fin);

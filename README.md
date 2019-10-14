@@ -3,19 +3,35 @@
 [![codecov](https://codecov.io/gh/LeavaTail/fat-tracer/branch/master/graph/badge.svg)](https://codecov.io/gh/LeavaTail/fat-tracer)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2eb72d5997cd4a5585c4fb163859ad23)](https://www.codacy.com/manual/LeavaTail/fat-tracer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LeavaTail/fat-tracer&amp;utm_campaign=Badge_Grade)
 
-`FAT tracer` print out a hexdump or do the reverse that referenced `xxd`.
+`FAT tracer` prints the file system information present on device.
 
 ## Description
-`phex` creates a hex dump of a given file or standard input.
-It can also convert a hex dump back to its original binary form.
-Like `uuencode`(1) and `uudecode`(1) it allows the transmission of binary data in a 'mail-safe' ASCII representation, but has the advantage of decoding to standard output.
-
 ***DEMO:***
+
 ```
-  $ phex AUTHORS
-00000000:4c65 6176 6154 6169 6c20 3c73 7461 626f LeavaTail.<stabo
-00000010:772e 6475 7374 6572 4067 6d61 696c 2e63 w.duster@gmail.c
-00000020:6f6d 3e0a 0000 0000 0000 0000 0000 0000 om>.
+ $ ./fatracer sample/fat12.img
+BootStrap instruction       : eb 3c 90
+OEM Name                    : mkfs.fat
+Bytes per Sector            : 512
+Sectors per cluster         : 4
+Reserved Sector             : 1
+FAT count                   : 2
+Root Directory entry count  : 512
+Sector count in Volume      : 200
+Media                       : 248
+Sector count in FAT         : 1
+Sector count in Track       : 32
+Head count                  : 64
+Hidden sector count         : 0
+Sector count in volume      : 0
+BootStrap                   : 80
+Reserved                    : 0
+Boot Signature              : 29
+Volume ID                   : 2a1b56f9
+Volume Label                : NO NAME
+FileSystem Type             : FAT12
+BootStrap(Dep systems)      : ...[|.".t.V.......^..2.......This is not a bootable disk.  Please insert a bootable floppy and..press any key to try again ... .................................................................................................................................................................................................................................................................................................................................
+Boot Signature              : 55aa
 ```
 
 ## Requirement

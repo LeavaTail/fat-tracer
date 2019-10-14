@@ -38,14 +38,34 @@ static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t
   *offset += n;
 }
 
+static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_t len)
+{
+  int i;
+  memset(ret, '\0', len);
+  for (i = 0; i < len; i++) {
+    if (buf[i] >= 0x20 && buf[i] <= 0x7e)
+      sprintf(ret, "%s%c", ret, buf[i]);
+    else
+      strcat(ret, ".");
+  }
+  return ret;
+}
+
+static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_t len)
+{
+  int i;
+  for (i = 0; i < len; i++) {
+    sprintf(ret, "%s%x", ret, buf[i]);
+  }
+  return ret;
+}
+
+
 /**
- * FAT12 DEFINATION
+ * FAT DEFINATION
  */
 #define RESVAREA_SIZE 512
 
-/**
- * FAT12 structure
- */
 enum {
   JmpBootSIZE  = 3,
   ORMNameSIZE  = 8,
@@ -61,9 +81,17 @@ enum {
   NumHeadsSIZE = 2,
   HiddSecSIZE = 4,
   TotSec32SIZE = 4,
+  DrvNumSIZE = 1,
+  Reserved1SIZE = 1,
+  BootSigSIZE = 1,
+  VolIDSIZE = 4,
+  VolLabSIZE = 11,
+  FilSysTypeSIZE = 8,
+  BootCodeSIZE = 448,
+  BootSignSIZE = 2,
 };
 
-struct fat12_reserved_info {
+struct fat_reserved_info {
   unsigned char BS_JmpBoot[JmpBootSIZE];
   unsigned char BS_ORMName[ORMNameSIZE];
   u_int16_t BPB_BytesPerSec;
@@ -78,6 +106,31 @@ struct fat12_reserved_info {
   u_int16_t BPB_NumHeads;
   u_int32_t BPB_HiddSec;
   u_int32_t BPB_TotSec32;
+  unsigned char reserved1[476];
 };
+
+struct fat12_reserved_info {
+  unsigned char BS_DrvNum;
+  u_int8_t  BS_Reserved1;
+  unsigned char BS_BootSig;
+  unsigned char BS_VolID[VolIDSIZE];
+  unsigned char BS_VolLab[VolLabSIZE];
+  unsigned char BS_FilSysType[FilSysTypeSIZE];
+  unsigned char BS_BootCode[BootCodeSIZE];
+  unsigned char BS_BootSign[BootSignSIZE];
+};
+
+/**
+ * FAT12 structure
+ */
+int fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+int fat12_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
+
+/**
+ * FAT32 structure
+ */
+bool is_fat32format(struct fat_reserved_info *);
+int fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+int fat32_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
 
 #endif /*_FAT12_H */
