@@ -145,9 +145,11 @@ int read_file(const char *path)
   FILE *fout = stdout;
   size_t count;
   size_t offset = 0;
+  enum FStype fstype;
   u_int16_t sector;
   u_int32_t secsPerFat;
   u_int32_t totSec;
+  u_int32_t CountofClusters;
   u_int16_t FatStartSector;
   u_int32_t FatSectors;
   u_int32_t RootDirStartSector;
@@ -192,6 +194,14 @@ int read_file(const char *path)
           RootDirStartSector * sector +  RootDirSectors * sector - 1);
   fprintf(fout, "%-28s: %08x - %08x\n", "Data Directory Sector", DataStartSector * sector,
           DataStartSector * sector +  DataSectors * sector - 1);
+
+  CountofClusters = DataSectors / resv_info.BPB_SecPerClus;
+  if (CountofClusters < FAT16_CLUSTERS)
+    fstype = FAT12_FILESYSTEM;
+  else if (CountofClusters < FAT32_CLUSTERS)
+    fstype = FAT16_FILESYSTEM;
+  else
+    fstype = FAT32_FILESYSTEM;
 
 fin_end:
   fclose(fin);

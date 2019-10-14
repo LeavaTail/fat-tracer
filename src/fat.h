@@ -31,6 +31,19 @@ enum
 	CMDLINE_FAILURE = 1
 };
 
+/**
+ * FAT TYPE (12/16/32)
+ *  12: FAT12
+ *  16: FAT16
+ *  32: FAT32
+ */
+enum FStype
+{
+	FAT12_FILESYSTEM = 12,
+  FAT16_FILESYSTEM = 16,
+  FAT32_FILESYSTEM = 32,
+};
+
 static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t n)
 {
   size_t o = *offset;
@@ -65,6 +78,8 @@ static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_
  * FAT DEFINATION
  */
 #define RESVAREA_SIZE 512
+#define FAT16_CLUSTERS 4096
+#define FAT32_CLUSTERS 65526
 
 enum {
   JmpBootSIZE  = 3,
