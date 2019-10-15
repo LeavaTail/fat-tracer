@@ -259,6 +259,7 @@ int read_file(const char *path)
   int err;
   int secv;
   unsigned char resv_area[RESVAREA_SIZE + 1];
+  unsigned char fsinfo_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
   unsigned char *root_area;
   unsigned char *data_area;
@@ -280,6 +281,7 @@ int read_file(const char *path)
 
   struct fat_reserved_info resv_info = {0};
   struct fat_dentry dentry = {0};
+    struct fat32_fsinfo fs_info = {0};
 
   if ((fin = fopen(path, "rb")) == NULL) {
     perror("file open error");
@@ -293,8 +295,14 @@ int read_file(const char *path)
   sector = resv_info.BPB_BytesPerSec;
 
   if (is_fat32format(&resv_info)) {
+    /* RESERVED AREA */
     fat32_load_reservedinfo(&resv_info, resv_area, offset);
     fat32_dump_reservedinfo(&resv_info, fout);
+    /* FSIFNO AREA */
+    count = fread(fsinfo_area, sizeof(fsinfo_area[0]), RESVAREA_SIZE, fin);
+    fat32_load_fsinfo(&fs_info, fsinfo_area);
+    fat32_dump_fsinfo(&fs_info, fout);
+
     secsPerFat = ((struct fat32_reserved_info *)(resv_info.reserved1))->BPB_FATSz32;
     totSec = resv_info.BPB_TotSec32;
   } else {

@@ -87,3 +87,30 @@ int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
   __memcpy(&(fat32_info->BS_BootCode32), buf, &offset, BootCode32SIZE);
   __memcpy(&(fat32_info->BS_BootSign), buf, &offset, BootSignSIZE);
 }
+
+int fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
+{
+  char ret[RESVAREA_SIZE + 1] = {0};
+
+  fprintf(out, "\nFSINFO\n");
+
+  fprintf(out, "%-28s: %x\n", "signature1", info->FSI_LeadSig);
+  fprintf(out, "%-28s: %s\n", "Reserved1", setcharx(info->FSI_Reserved1, ret, FSI_Reserved1SIZE));
+  fprintf(out, "%-28s: %x\n", "signature2", info->FSI_StrucSig);
+  fprintf(out, "%-28s: %x\n", "Free cluster count", info->FSI_Free_Count);
+  fprintf(out, "%-28s: %x\n", "last allocated cluster", info->FSI_Nxt_Free);
+  fprintf(out, "%-28s: %s\n", "Reserved2", setcharx(info->FSI_Reserved2, ret, FSI_Reserved2SIZE));
+  fprintf(out, "%-28s: %x\n\n", "signature3", info->FSI_TrailSig);
+}
+
+int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
+{
+  size_t offset = 0;
+  __memcpy(&(info->FSI_LeadSig), buf, &offset, FSI_LeadSigSIZE);
+  __memcpy(&(info->FSI_Reserved1), buf, &offset, FSI_Reserved1SIZE);
+  __memcpy(&(info->FSI_StrucSig), buf, &offset, FSI_StrucSigSIZE);
+  __memcpy(&(info->FSI_Free_Count), buf, &offset, FSI_Free_CountSIZE);
+  __memcpy(&(info->FSI_Nxt_Free), buf, &offset, FSI_Nxt_FreeSIZE);
+  __memcpy(&(info->FSI_Reserved2), buf, &offset, FSI_Reserved2SIZE);
+  __memcpy(&(info->FSI_TrailSig), buf, &offset, FSI_TrailSigSIZE);
+}

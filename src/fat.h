@@ -166,6 +166,27 @@ struct fat32_reserved_info {
   unsigned char BS_BootSign[BootSignSIZE];
 };
 
+enum {
+  FSI_LeadSigSIZE = 4,
+  FSI_Reserved1SIZE = 480,
+  FSI_StrucSigSIZE = 4,
+  FSI_Free_CountSIZE = 4,
+  FSI_Nxt_FreeSIZE = 4,
+  FSI_Reserved2SIZE = 12,
+  FSI_TrailSigSIZE = 4,
+};
+
+
+struct fat32_fsinfo {
+  u_int32_t FSI_LeadSig;
+  unsigned char FSI_Reserved1[FSI_Reserved1SIZE];
+  u_int32_t FSI_StrucSig;
+  u_int32_t FSI_Free_Count;
+  u_int32_t FSI_Nxt_Free;
+  unsigned char FSI_Reserved2[FSI_Reserved2SIZE];
+  u_int32_t FSI_TrailSig;
+};
+
 enum Fat12Entry
 {
   FAT12_UNUSED = 0x000,
@@ -275,5 +296,7 @@ int fat16_load_fattable(void *);
 bool is_fat32format(struct fat_reserved_info *);
 int fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
 int fat32_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
+int fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
+int fat32_load_fsinfo(struct fat32_fsinfo *, char *);
 
 #endif /*_FAT12_H */
