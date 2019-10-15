@@ -12,4 +12,4 @@ endif
 
 EXTRA_DIST = docs man
 man_MANS = man/fatracer.1
-TESTS = tests/simple.sh
+TESTS = tests/simple.sh tests/usage.sh
