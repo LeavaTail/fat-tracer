@@ -287,7 +287,7 @@ int read_file(const char *path)
     goto out;
   }
 
-  count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin);
+  count = fread(resv_area, sizeof(resv_area[0]), RESVAREA_SIZE, fin);
   offset = fat_load_reservedinfo(&resv_info, resv_area);
   fat_dump_reservedinfo(&resv_info, fout);
   sector = resv_info.BPB_BytesPerSec;
