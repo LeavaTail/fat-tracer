@@ -44,14 +44,14 @@ int fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   char ret[RESVAREA_SIZE + 1] = {0};
   struct fat12_reserved_info *fat12_info = (struct fat12_reserved_info *)(info->reserved1);
 
-  fprintf(out, "%-28s: %x\n", "BootStrap", fat12_info->BS_DrvNum);
-  fprintf(out, "%-28s: %x\n", "Reserved",  fat12_info->BS_Reserved1);
-  fprintf(out, "%-28s: %x\n", "Boot Signature",  fat12_info->BS_BootSig);
-  fprintf(out, "%-28s: %s\n", "Volume ID", setcharx(fat12_info->BS_VolID, ret, VolIDSIZE));
-  fprintf(out, "%-28s: %s\n", "Volume Label", setcharc(fat12_info->BS_VolLab, ret, VolLabSIZE));
-  fprintf(out, "%-28s: %s\n", "FileSystem Type", setcharc(fat12_info->BS_FilSysType, ret, FilSysTypeSIZE));
-  fprintf(out, "%-28s: %s\n", "BootStrap(Dep systems)",  setcharc(fat12_info->BS_BootCode, ret, BootCodeSIZE));
-  fprintf(out, "%-28s: %x%x\n", "Boot Signature",  fat12_info->BS_BootSign[0],
+  fprintf(out, "%-28s: %x\n", _("BootStrap"), fat12_info->BS_DrvNum);
+  fprintf(out, "%-28s: %x\n", _("Reserved"),  fat12_info->BS_Reserved1);
+  fprintf(out, "%-28s: %x\n", _("Boot Signature"),  fat12_info->BS_BootSig);
+  fprintf(out, "%-28s: %s\n", _("Volume ID"), setcharx(fat12_info->BS_VolID, ret, VolIDSIZE));
+  fprintf(out, "%-28s: %s\n", _("Volume Label"), setcharc(fat12_info->BS_VolLab, ret, VolLabSIZE));
+  fprintf(out, "%-28s: %s\n", _("FileSystem Type"), setcharc(fat12_info->BS_FilSysType, ret, FilSysTypeSIZE));
+  fprintf(out, "%-28s: %s\n", _("BootStrap(Dep systems)"),  setcharc(fat12_info->BS_BootCode, ret, BootCodeSIZE));
+  fprintf(out, "%-28s: %x%x\n", _("Boot Signature"),  fat12_info->BS_BootSign[0],
           fat12_info->BS_BootSign[1]);
 }
 

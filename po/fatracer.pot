@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the fatracer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: fatracer 0.1\n"
+"Report-Msgid-Bugs-To: starbow.duster@gmail.com\n"
+"POT-Creation-Date: 2019-10-16 23:50+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main.c:74
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]\n"
+msgstr ""
+
+#: src/main.c:92
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#: src/main.c:128
+msgid "LFN "
+msgstr ""
+
+#: src/main.c:133
+msgid "RO "
+msgstr ""
+
+#: src/main.c:135
+msgid "HIDDEN "
+msgstr ""
+
+#: src/main.c:137
+msgid "SYS "
+msgstr ""
+
+#: src/main.c:139
+msgid "VOLUME "
+msgstr ""
+
+#: src/main.c:141
+msgid "DIR "
+msgstr ""
+
+#: src/main.c:143
+msgid "ARCH "
+msgstr ""
+
+#: src/main.c:157
+msgid "BootStrap instruction"
+msgstr ""
+
+#: src/main.c:158
+msgid "OEM Name"
+msgstr ""
+
+#: src/main.c:159
+msgid "Bytes per Sector"
+msgstr ""
+
+#: src/main.c:160
+msgid "Sectors per cluster"
+msgstr ""
+
+#: src/main.c:161
+msgid "Reserved Sector"
+msgstr ""
+
+#: src/main.c:162
+msgid "FAT count"
+msgstr ""
+
+#: src/main.c:163
+msgid "Root Directory entry count"
+msgstr ""
+
+#: src/main.c:164
+msgid "Sector count in Volume"
+msgstr ""
+
+#: src/main.c:165
+msgid "Media"
+msgstr ""
+
+#: src/main.c:166
+msgid "Sector count in FAT"
+msgstr ""
+
+#: src/main.c:167
+msgid "Sector count in Track"
+msgstr ""
+
+#: src/main.c:168
+msgid "Head count"
+msgstr ""
+
+#: src/main.c:169
+msgid "Hidden sector count"
+msgstr ""
+
+#: src/main.c:170
+msgid "Sector count in volume"
+msgstr ""
+
+#: src/main.c:209
+msgid "FileName"
+msgstr ""
+
+#: src/main.c:210
+msgid "File Attribute"
+msgstr ""
+
+#: src/main.c:211
+msgid "Smaller information"
+msgstr ""
+
+#: src/main.c:213
+msgid "Create Time (ms)"
+msgstr ""
+
+#: src/main.c:218
+msgid "Access Time (ms)"
+msgstr ""
+
+#: src/main.c:221
+msgid "Modify Time (ms)"
+msgstr ""
+
+#: src/main.c:225
+msgid "First Sector"
+msgstr ""
+
+#: src/main.c:227
+msgid "File size"
+msgstr ""
+
+#: src/main.c:287
+msgid "file open error"
+msgstr ""
+
+#: src/main.c:323
+msgid "Fat Table Sector"
+msgstr ""
+
+#: src/main.c:325
+msgid "Root Directory Sector"
+msgstr ""
+
+#: src/main.c:327
+msgid "Data Directory Sector"
+msgstr ""
+
+#: src/fat12_common.c:47 src/fat32_common.c:58 src/fat32_common.c:60
+msgid "BootStrap"
+msgstr ""
+
+#: src/fat12_common.c:48 src/fat32_common.c:61
+msgid "Reserved"
+msgstr ""
+
+#: src/fat12_common.c:49 src/fat12_common.c:54 src/fat32_common.c:62
+#: src/fat32_common.c:67
+msgid "Boot Signature"
+msgstr ""
+
+#: src/fat12_common.c:50 src/fat32_common.c:63
+msgid "Volume ID"
+msgstr ""
+
+#: src/fat12_common.c:51 src/fat32_common.c:64
+msgid "Volume Label"
+msgstr ""
+
+#: src/fat12_common.c:52 src/fat32_common.c:65
+msgid "FileSystem Type"
+msgstr ""
+
+#: src/fat12_common.c:53 src/fat32_common.c:66
+msgid "BootStrap(Dep systems)"
+msgstr ""
+
+#: src/fat32_common.c:52
+msgid "Sectors Per FAT table"
+msgstr ""
+
+#: src/fat32_common.c:53
+msgid "Active flags"
+msgstr ""
+
+#: src/fat32_common.c:54
+msgid "FAT32 Volume version"
+msgstr ""
+
+#: src/fat32_common.c:55
+msgid "Root Directory First sector"
+msgstr ""
+
+#: src/fat32_common.c:56
+msgid "FSINFO sector"
+msgstr ""
+
+#: src/fat32_common.c:57
+msgid "Backup Boot sector"
+msgstr ""
+
+#: src/fat32_common.c:59
+msgid "Reserved(FAT32)"
+msgstr ""
+
+#: src/fat32_common.c:95
+msgid "FSINFO"
+msgstr ""
+
+#: src/fat32_common.c:97
+msgid "signature1"
+msgstr ""
+
+#: src/fat32_common.c:98
+msgid "Reserved1"
+msgstr ""
+
+#: src/fat32_common.c:99
+msgid "signature2"
+msgstr ""
+
+#: src/fat32_common.c:100
+msgid "Free cluster count"
+msgstr ""
+
+#: src/fat32_common.c:101
+msgid "last allocated cluster"
+msgstr ""
+
+#: src/fat32_common.c:102
+msgid "Reserved2"
+msgstr ""
+
+#: src/fat32_common.c:103
+msgid "signature3"
+msgstr ""

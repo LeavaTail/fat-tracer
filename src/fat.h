@@ -22,6 +22,10 @@
 #define fatracer_debug(fmt, ...)	do { } while (0)
 #endif
 
+#include <libintl.h>
+#include <config.h>
+#define _(String) gettext (String)
+
 /**
  * ERROR STATUS CODE
  *  1: invalid command-line option
