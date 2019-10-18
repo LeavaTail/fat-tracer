@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -152,6 +153,55 @@ bool check_dentryfree(const char *buf)
   return false;
 }
 
+static inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+	return (n != 0 && ((n & (n - 1)) == 0));
+}
+
+static bool check_fat_bpb(struct fat_reserved_info *info)
+{
+  bool ret = false;
+
+	/* Validate this looks like a FAT filesystem BPB */
+	if (!info->BPB_RevdSecCnt) {
+			fprintf(stderr, "bogus number of reserved sectors");
+		goto out;
+	}
+	if (!info->BPB_NumFATs) {
+			fprintf(stderr, "bogus number of FAT structure");
+		goto out;
+	}
+
+	/*
+	 * Earlier we checked here that b->secs_track and b->head are nonzero,
+	 * but it turns out valid FAT filesystems can have zero there.
+	 */
+
+	if (!fat_valid_media(info->BPB_Media)) {
+			fprintf(stderr, "invalid media value (0x%02x)", (unsigned)info->BPB_Media);
+		goto out;
+	}
+
+	if (!is_power_of_2(info->BPB_BytesPerSec)
+	    || (info->BPB_BytesPerSec < 512)
+	    || (info->BPB_BytesPerSec > 4096)) {
+			fprintf(stderr, "bogus logical sector size %u",
+			       (unsigned)info->BPB_BytesPerSec);
+		goto out;
+	}
+
+	if (!is_power_of_2(info->BPB_SecPerClus)) {
+			fprintf(stderr, "bogus sectors per cluster %u",
+				(unsigned)info->BPB_SecPerClus);
+		goto out;
+	}
+
+  ret = true;
+out:
+  return ret;
+}
+
 int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   fprintf(out, "%-28s: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
@@ -188,6 +238,9 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
   __memcpy(&(info->BPB_NumHeads), buf, &offset, NumHeadsSIZE);
   __memcpy(&(info->BPB_HiddSec), buf, &offset, HiddSecSIZE);
   __memcpy(&(info->BPB_TotSec32), buf, &offset, TotSec32SIZE);
+
+  if (!check_fat_bpb(info))
+    offset = -EINVAL;
 
   return offset;
 }
@@ -258,6 +311,8 @@ int read_file(const char *path)
 {
   int err;
   int secv;
+  int offset = 0;
+  size_t count = 0;
   unsigned char resv_area[RESVAREA_SIZE + 1];
   unsigned char fsinfo_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
@@ -265,8 +320,6 @@ int read_file(const char *path)
   unsigned char *data_area;
   FILE *fin;
   FILE *fout = stdout;
-  size_t count;
-  size_t offset = 0;
   enum FStype fstype;
   u_int16_t sector;
   u_int32_t secsPerFat;
@@ -290,7 +343,17 @@ int read_file(const char *path)
   }
 
   count = fread(resv_area, sizeof(resv_area[0]), RESVAREA_SIZE, fin);
+  if (count < RESVAREA_SIZE) {
+    err = -EINVAL;
+    goto out;
+  }
+
   offset = fat_load_reservedinfo(&resv_info, resv_area);
+  if (offset < 0) {
+    err = -EINVAL;
+    goto out;
+  }
+
   fat_dump_reservedinfo(&resv_info, fout);
   sector = resv_info.BPB_BytesPerSec;
 
@@ -370,6 +433,7 @@ int main(int argc, char *argv[])
   int opt;
   int longindex;
   int n_files;
+  int ret = 0;
   bool infile = false;
 
   setlocale (LC_ALL, "");
@@ -402,6 +466,6 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  read_file(argv[optind]);
-  return 0;
+  ret = read_file(argv[optind]);
+  return ret;
 }

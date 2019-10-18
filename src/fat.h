@@ -78,6 +78,11 @@ static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_
   return ret;
 }
 
+/* media of boot sector */
+static inline int fat_valid_media(u_int8_t media)
+{
+	return 0xf8 <= media || media == 0xf0;
+}
 
 /**
  * FAT DEFINATION
