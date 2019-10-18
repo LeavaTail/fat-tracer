@@ -52,7 +52,7 @@ int fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   fprintf(out, "%-28s: %s\n", _("FileSystem Type"), setcharc(fat12_info->BS_FilSysType, ret, FilSysTypeSIZE));
   fprintf(out, "%-28s: %s\n", _("BootStrap(Dep systems)"),  setcharc(fat12_info->BS_BootCode, ret, BootCodeSIZE));
   fprintf(out, "%-28s: %x%x\n", _("Boot Signature"),  fat12_info->BS_BootSign[0],
-          fat12_info->BS_BootSign[1]);
+      fat12_info->BS_BootSign[1]);
 }
 
 int fat12_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)

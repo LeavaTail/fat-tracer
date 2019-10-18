@@ -65,7 +65,7 @@ int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   fprintf(out, "%-28s: %s\n", _("FileSystem Type"), setcharc(fat32_info->BS_FilSysType, ret, FilSysTypeSIZE));
   fprintf(out, "%-28s: %s\n", _("BootStrap(Dep systems)"),  setcharc(fat32_info->BS_BootCode32, ret, BootCode32SIZE));
   fprintf(out, "%-28s: %x%x\n", _("Boot Signature"),  fat32_info->BS_BootSign[0],
-          fat32_info->BS_BootSign[1]);
+      fat32_info->BS_BootSign[1]);
 }
 
 int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)

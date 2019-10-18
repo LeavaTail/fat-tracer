@@ -14,10 +14,10 @@
  */
 #ifdef FATRACER_DEBUG
 #define fatracer_debug(fmt, ...)						\
-	do {								\
-		fprintf( stderr, "(%s: %u): %s:" fmt, \
-				__FILE__, __LINE__, __func__, ##__VA_ARGS__); \
-	} while (0)
+  do {								\
+    fprintf( stderr, "(%s: %u): %s:" fmt, \
+        __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+  } while (0)
 #else
 #define fatracer_debug(fmt, ...)	do { } while (0)
 #endif
@@ -32,7 +32,7 @@
  */
 enum
 {
-	CMDLINE_FAILURE = 1
+  CMDLINE_FAILURE = 1
 };
 
 /**
@@ -43,7 +43,7 @@ enum
  */
 enum FStype
 {
-	FAT12_FILESYSTEM = 12,
+  FAT12_FILESYSTEM = 12,
   FAT16_FILESYSTEM = 16,
   FAT32_FILESYSTEM = 32,
 };
@@ -81,7 +81,7 @@ static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_
 /* media of boot sector */
 static inline int fat_valid_media(u_int8_t media)
 {
-	return 0xf8 <= media || media == 0xf0;
+  return 0xf8 <= media || media == 0xf0;
 }
 
 /**
