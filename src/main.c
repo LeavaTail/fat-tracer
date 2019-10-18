@@ -309,7 +309,7 @@ int fat_load_dentry(struct fat_dentry *dentry, const void *buf)
  */
 int read_file(const char *path)
 {
-  int err;
+  int err = 0;
   int secv;
   int offset = 0;
   size_t count = 0;
@@ -344,6 +344,7 @@ int read_file(const char *path)
 
   count = fread(resv_area, sizeof(resv_area[0]), RESVAREA_SIZE, fin);
   if (count < RESVAREA_SIZE) {
+    perror(_("file read error"));
     err = -EINVAL;
     goto out;
   }

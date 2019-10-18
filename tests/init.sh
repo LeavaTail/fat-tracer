@@ -8,9 +8,9 @@ function initialize(){
   mkfs.vfat sample/fat12.img
   mkfs.vfat sample/fat16.img
   mkfs.vfat sample/fat32.img
-  sudo mount -t vfat -o loop sample/fat12.img sample/mnt12
-  sudo mount -t vfat -o loop sample/fat16.img sample/mnt16
-  sudo mount -t vfat -o loop sample/fat32.img sample/mnt32
+  sudo mount -t vfat -o loop,uid=$(id -u),gid=$(id -g) sample/fat12.img sample/mnt12
+  sudo mount -t vfat -o loop,uid=$(id -u),gid=$(id -g) sample/fat16.img sample/mnt16
+  sudo mount -t vfat -o loop,uid=$(id -u),gid=$(id -g) sample/fat32.img sample/mnt32
 }
 
 function cleanup(){
