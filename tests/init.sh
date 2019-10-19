@@ -4,7 +4,7 @@ function initialize(){
   mkdir -p sample/mnt12 sample/mnt16 sample/mnt32
   dd if=/dev/zero of=sample/fat12.img bs=1K count=1000
   dd if=/dev/zero of=sample/fat16.img bs=1K count=10000
-  dd if=/dev/zero of=sample/fat32.img bs=1K count=100000
+  dd if=/dev/zero of=sample/fat32.img bs=1K count=1000000
   mkfs.vfat sample/fat12.img
   mkfs.vfat sample/fat16.img
   mkfs.vfat sample/fat32.img
