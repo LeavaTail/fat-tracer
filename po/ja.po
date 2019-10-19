@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fatracer 0.1\n"
 "Report-Msgid-Bugs-To: starbow.duster@gmail.com\n"
-"POT-Creation-Date: 2019-10-16 23:50+0900\n"
+"POT-Creation-Date: 2019-10-19 20:08+0900\n"
 "PO-Revision-Date: 2019-10-17 00:10+0900\n"
 "Last-Translator: LeavaTail <starbow.duster@gmail.com>\n"
 "Language-Team: Japanese\n"
@@ -18,180 +18,184 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/main.c:74
+#: src/main.c:75
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]\n"
 msgstr "使用法: %s [オプション]... [ファイル]\n"
 
-#: src/main.c:92
+#: src/main.c:93
 #, c-format
 msgid "Written by %s.\n"
 msgstr "作者 %s。\n"
 
-#: src/main.c:128
+#: src/main.c:129
 msgid "LFN "
 msgstr "LFN "
 
-#: src/main.c:133
+#: src/main.c:134
 msgid "RO "
 msgstr "RO "
 
-#: src/main.c:135
+#: src/main.c:136
 msgid "HIDDEN "
 msgstr "HIDDEN "
 
-#: src/main.c:137
+#: src/main.c:138
 msgid "SYS "
 msgstr "SYS "
 
-#: src/main.c:139
+#: src/main.c:140
 msgid "VOLUME "
 msgstr "VOLUME "
 
-#: src/main.c:141
+#: src/main.c:142
 msgid "DIR "
 msgstr "DIR "
 
-#: src/main.c:143
+#: src/main.c:144
 msgid "ARCH "
 msgstr "ARCH "
 
-#: src/main.c:157
+#: src/main.c:207
 msgid "BootStrap instruction"
-msgstr "ブートストラップ"
+msgstr "ブートストラップ\t"
 
-#: src/main.c:158
+#: src/main.c:208
 msgid "OEM Name"
-msgstr "OEM名"
+msgstr "ＯＥＭ名"
 
-#: src/main.c:159
+#: src/main.c:209
 msgid "Bytes per Sector"
-msgstr "1セクタのバイト数"
+msgstr "１セクタのバイト数\t"
 
-#: src/main.c:160
+#: src/main.c:210
 msgid "Sectors per cluster"
-msgstr "1クラスタのセクタ数"
+msgstr "１クラスタのセクタ数\t"
 
-#: src/main.c:161
+#: src/main.c:211
 msgid "Reserved Sector"
-msgstr "予約領域のセクタ数"
+msgstr "予約領域のセクタ数\t"
 
-#: src/main.c:162
+#: src/main.c:212
 msgid "FAT count"
-msgstr "FATテーブルの個数"
+msgstr "ＦＡＴテーブルの個数\t"
 
-#: src/main.c:163
+#: src/main.c:213
 msgid "Root Directory entry count"
 msgstr "ルートディレクトリのエントリ数"
 
-#: src/main.c:164
+#: src/main.c:214
 msgid "Sector count in Volume"
-msgstr "ボリュームのセクタ総数"
+msgstr "ボリュームのセクタ総数\t"
 
-#: src/main.c:165
+#: src/main.c:215
 msgid "Media"
-msgstr "メディアのタイプ"
+msgstr "メディアのタイプ\t"
 
-#: src/main.c:166
+#: src/main.c:216
 msgid "Sector count in FAT"
-msgstr "FATテーブルのセクタ数"
+msgstr "ＦＡＴテーブルのセクタ数"
 
-#: src/main.c:167
+#: src/main.c:217
 msgid "Sector count in Track"
-msgstr "1トラック当たりのセクタ数"
+msgstr "１トラック当たりのセクタ数"
 
-#: src/main.c:168
+#: src/main.c:218
 msgid "Head count"
 msgstr "ヘッド数"
 
-#: src/main.c:169
+#: src/main.c:219
 msgid "Hidden sector count"
-msgstr "隠れた物理セクタ数"
+msgstr "隠れた物理セクタ数\t"
 
-#: src/main.c:170
+#: src/main.c:220
 msgid "Sector count in volume"
-msgstr "ボリュームの総セクタ数"
+msgstr "ボリュームの総セクタ数\t"
 
-#: src/main.c:209
+#: src/main.c:262
 msgid "FileName"
-msgstr "ファイル名"
+msgstr "ファイル名\t"
 
-#: src/main.c:210
+#: src/main.c:263
 msgid "File Attribute"
-msgstr "属性"
+msgstr "属性\t"
 
-#: src/main.c:211
+#: src/main.c:264
 msgid "Smaller information"
-msgstr "小文字情報"
+msgstr "小文字情報\t"
 
-#: src/main.c:213
+#: src/main.c:266
 msgid "Create Time (ms)"
-msgstr "作成時刻 (ms)"
+msgstr "作成時刻（ｍｓ）\t"
 
-#: src/main.c:218
+#: src/main.c:271
 msgid "Access Time (ms)"
-msgstr "参照時間 (ms)"
+msgstr "参照時間（ｍｓ）\t"
 
-#: src/main.c:221
+#: src/main.c:274
 msgid "Modify Time (ms)"
-msgstr "更新時間 (ms)"
+msgstr "更新時間（ｍｓ）\t"
 
-#: src/main.c:225
+#: src/main.c:278
 msgid "First Sector"
-msgstr "先頭セクタ"
+msgstr "先頭セクタ\t"
 
-#: src/main.c:227
+#: src/main.c:280
 msgid "File size"
-msgstr "ファイルサイズ"
+msgstr "ファイルサイズ\t\t"
 
-#: src/main.c:287
+#: src/main.c:340
 msgid "file open error"
 msgstr "ファイルのオープンエラー"
 
-#: src/main.c:323
-msgid "Fat Table Sector"
-msgstr "FATテーブルのセクタ"
+#: src/main.c:347
+msgid "file read error"
+msgstr "ファイルの読み込みエラー"
 
-#: src/main.c:325
+#: src/main.c:387
+msgid "Fat Table Sector"
+msgstr "FATテーブルのセクタ\t"
+
+#: src/main.c:389
 msgid "Root Directory Sector"
 msgstr "ルートディレクトリのセクタ"
 
-#: src/main.c:327
+#: src/main.c:391
 msgid "Data Directory Sector"
-msgstr "データ領域のセクタ"
+msgstr "データ領域のセクタ\t"
 
 #: src/fat12_common.c:47 src/fat32_common.c:58 src/fat32_common.c:60
 msgid "BootStrap"
-msgstr "ブートストラップ"
+msgstr "ブートストラップ\t"
 
 #: src/fat12_common.c:48 src/fat32_common.c:61
 msgid "Reserved"
-msgstr "予約領域"
+msgstr "予約領域\t"
 
 #: src/fat12_common.c:49 src/fat12_common.c:54 src/fat32_common.c:62
 #: src/fat32_common.c:67
 msgid "Boot Signature"
-msgstr "ブートシグネチャ"
+msgstr "ブートシグネチャ\t"
 
 #: src/fat12_common.c:50 src/fat32_common.c:63
 msgid "Volume ID"
-msgstr "ボリュームシリアル番号"
+msgstr "ボリュームシリアル番号\t"
 
 #: src/fat12_common.c:51 src/fat32_common.c:64
 msgid "Volume Label"
-msgstr "ボリュームラベル"
+msgstr "ボリュームラベル\t"
 
 #: src/fat12_common.c:52 src/fat32_common.c:65
 msgid "FileSystem Type"
-msgstr "ファイルシステムタイプ"
+msgstr "ファイルシステムタイプ\t"
 
 #: src/fat12_common.c:53 src/fat32_common.c:66
 msgid "BootStrap(Dep systems)"
-msgstr "システム依存フィールド"
+msgstr "システム依存フィールド\t"
 
 #: src/fat32_common.c:52
 msgid "Sectors Per FAT table"
-msgstr "FATテーブル当たりのセクタ数"
+msgstr "ＦＡＴテーブル当たりのセクタ数\t"
 
 #: src/fat32_common.c:53
 msgid "Active flags"
@@ -199,7 +203,7 @@ msgstr "フラグ"
 
 #: src/fat32_common.c:54
 msgid "FAT32 Volume version"
-msgstr "FAT32ボリュームのバージョン"
+msgstr "ＦＡＴ３２ボリュームのバージョン"
 
 #: src/fat32_common.c:55
 msgid "Root Directory First sector"
@@ -207,7 +211,7 @@ msgstr "ルートディレクトリの先頭セクタ番号"
 
 #: src/fat32_common.c:56
 msgid "FSINFO sector"
-msgstr "FSINFO構造体の先頭セクタ"
+msgstr "ＦＡＳＩＮＦＯの先頭セクタ"
 
 #: src/fat32_common.c:57
 msgid "Backup Boot sector"
@@ -215,15 +219,15 @@ msgstr "ブートセクタのバックアップ先のセクタ番号"
 
 #: src/fat32_common.c:59
 msgid "Reserved(FAT32)"
-msgstr "FAT32用の予約領域"
+msgstr "ＦＡＴ３２用の予約領域"
 
 #: src/fat32_common.c:95
 msgid "FSINFO"
-msgstr "FSINFO"
+msgstr "ＦＳＩＮＦＯ"
 
 #: src/fat32_common.c:97
 msgid "signature1"
-msgstr "FSINFOセクタ用のシグネチャ"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"
 
 #: src/fat32_common.c:98
 msgid "Reserved1"
@@ -231,7 +235,7 @@ msgstr "予約領域"
 
 #: src/fat32_common.c:99
 msgid "signature2"
-msgstr "FSINFOセクタ用のシグネチャ"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"
 
 #: src/fat32_common.c:100
 msgid "Free cluster count"
@@ -247,4 +251,4 @@ msgstr "予約領域"
 
 #: src/fat32_common.c:103
 msgid "signature3"
-msgstr "FSINFOセクタ用のシグネチャ"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"

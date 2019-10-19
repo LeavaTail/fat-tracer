@@ -204,20 +204,20 @@ out:
 
 int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  fprintf(out, "%-28s: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
-  fprintf(out, "%-28s: %s\n", _("OEM Name"), info->BS_ORMName);
-  fprintf(out, "%-28s: %u\n", _("Bytes per Sector"), info->BPB_BytesPerSec);
-  fprintf(out, "%-28s: %u\n", _("Sectors per cluster"), info->BPB_SecPerClus);
-  fprintf(out, "%-28s: %u\n", _("Reserved Sector"), info->BPB_RevdSecCnt);
-  fprintf(out, "%-28s: %u\n", _("FAT count"), info->BPB_NumFATs);
-  fprintf(out, "%-28s: %u\n", _("Root Directory entry count"), info->BPB_RootEntCnt);
-  fprintf(out, "%-28s: %u\n", _("Sector count in Volume"), info->BPB_TotSec16);
-  fprintf(out, "%-28s: %u\n", _("Media"), info->BPB_Media);
-  fprintf(out, "%-28s: %u\n", _("Sector count in FAT"), info->BPB_FATSz16);
-  fprintf(out, "%-28s: %u\n", _("Sector count in Track"), info->BPB_SecPerTrk);
-  fprintf(out, "%-28s: %u\n", _("Head count"), info->BPB_NumHeads);
-  fprintf(out, "%-28s: %u\n", _("Hidden sector count"), info->BPB_HiddSec);
-  fprintf(out, "%-28s: %u\n", _("Sector count in volume"), info->BPB_TotSec32);
+  fprintf(out, "%-28s\t: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
+  fprintf(out, "%-28s\t: %s\n", _("OEM Name"), info->BS_ORMName);
+  fprintf(out, "%-28s\t: %u\n", _("Bytes per Sector"), info->BPB_BytesPerSec);
+  fprintf(out, "%-28s\t: %u\n", _("Sectors per cluster"), info->BPB_SecPerClus);
+  fprintf(out, "%-28s\t: %u\n", _("Reserved Sector"), info->BPB_RevdSecCnt);
+  fprintf(out, "%-28s\t: %u\n", _("FAT count"), info->BPB_NumFATs);
+  fprintf(out, "%-28s\t: %u\n", _("Root Directory entry count"), info->BPB_RootEntCnt);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in Volume"), info->BPB_TotSec16);
+  fprintf(out, "%-28s\t: %u\n", _("Media"), info->BPB_Media);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in FAT"), info->BPB_FATSz16);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in Track"), info->BPB_SecPerTrk);
+  fprintf(out, "%-28s\t: %u\n", _("Head count"), info->BPB_NumHeads);
+  fprintf(out, "%-28s\t: %u\n", _("Hidden sector count"), info->BPB_HiddSec);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in volume"), info->BPB_TotSec32);
 }
 
 int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
@@ -259,25 +259,25 @@ int fat_dump_dentry(struct fat_dentry *info, FILE *out)
   fat_dateformat(&ctime, info->DIR_CrtDate);
   fat_attrformat(attrbuf, info->DIR_Attr);
 
-  fprintf(out, "%-28s: %s\n", _("FileName"), setcharc(info->IR_Name, ret, NameSIZE));
-  fprintf(out, "%-28s: %s\n", _("File Attribute"), attrbuf);
-  fprintf(out, "%-28s: %x\n", _("Smaller information"), info->DIR_NTRes);
+  fprintf(out, "%-28s\t: %s\n", _("FileName"), setcharc(info->IR_Name, ret, NameSIZE));
+  fprintf(out, "%-28s\t: %s\n", _("File Attribute"), attrbuf);
+  fprintf(out, "%-28s\t: %x\n", _("Smaller information"), info->DIR_NTRes);
   msec = info->DIR_CrtTimeTenth;
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Create Time (ms)"),
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Create Time (ms)"),
       1980 + ctime.tm_year, ctime.tm_mon, ctime.tm_mday,
       ctime.tm_hour, ctime.tm_min,
       (ctime.tm_sec * 2) + (msec / 100),
       msec % 100);
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Access Time (ms)"),
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Access Time (ms)"),
       1980 + atime.tm_year, atime.tm_mon, atime.tm_mday,
       atime.tm_hour, atime.tm_min, atime.tm_sec * 2, 0);
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Modify Time (ms)"),
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Modify Time (ms)"),
       1980 + mtime.tm_year, mtime.tm_mon, mtime.tm_mday,
       mtime.tm_hour, mtime.tm_min, mtime.tm_sec * 2, 0);
 
-  fprintf(out, "%-28s: %02x %02x\n", _("First Sector"), info->DIR_FstClusHI,
+  fprintf(out, "%-28s\t: %02x %02x\n", _("First Sector"), info->DIR_FstClusHI,
       info->DIR_FstClusLO);
-  fprintf(out, "%-28s: %x\n", _("File size"), info->DIR_FileSize);
+  fprintf(out, "%-28s\t: %x\n", _("File size"), info->DIR_FileSize);
 }
 
 
@@ -384,11 +384,11 @@ int read_file(const char *path)
   DataStartSector = RootDirStartSector + RootDirSectors;
   DataSectors = totSec - DataStartSector;
 
-  fprintf(fout, "%-28s: %08x - %08x\n", _("Fat Table Sector"), FatStartSector * sector,
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Fat Table Sector"), FatStartSector * sector,
       FatStartSector * sector +  FatSectors * sector - 1);
-  fprintf(fout, "%-28s: %08x - %08x\n", _("Root Directory Sector"), RootDirStartSector * sector,
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Root Directory Sector"), RootDirStartSector * sector,
       RootDirStartSector * sector +  RootDirSectors * sector - 1);
-  fprintf(fout, "%-28s: %08x - %08x\n", _("Data Directory Sector"), DataStartSector * sector,
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Data Directory Sector"), DataStartSector * sector,
       DataStartSector * sector +  DataSectors * sector - 1);
 
   CountofClusters = DataSectors / resv_info.BPB_SecPerClus;
