@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -71,7 +72,7 @@ void usage(int status)
     default:
       out = stdout;
   }
-  fprintf(out, "Usage: %s [OPTION]... [FILE]\n",
+  fprintf(out, _("Usage: %s [OPTION]... [FILE]\n"),
       PROGRAM_NAME);
 
   exit(status);
@@ -89,7 +90,7 @@ void version(const char *command_name, const char *version,
   FILE *out = stdout;
 
   fprintf(out, "%s %s\n", command_name, version);
-  fprintf(out, "Written by %s.\n", author);
+  fprintf(out, _("Written by %s.\n"), author);
 }
 
 int fat_dateformat(struct tm *t, u_int16_t date)
@@ -125,22 +126,22 @@ int fat_timeformat(struct tm *t, u_int16_t time)
 int fat_attrformat(char *buf, unsigned char attr)
 {
   if (attr & ATTR_LONG_FILE_NAME) {
-    strcat(buf ,"LFN ");
+    strcat(buf ,_("LFN "));
     return 0;
   }
 
   if (attr & ATTR_READ_ONLY)
-    strcat(buf ,"RO ");
+    strcat(buf ,_("RO "));
   if (attr & ATTR_HIDDEN)
-    strcat(buf ,"HIDDEN ");
+    strcat(buf ,_("HIDDEN "));
   if (attr & ATTR_SYSTEM)
-    strcat(buf ,"SYS ");
+    strcat(buf ,_("SYS "));
   if (attr & ATTR_VOLUME_ID)
-    strcat(buf ,"VOLUME ");
+    strcat(buf ,_("VOLUME "));
   if (attr & ATTR_DIRECTORY)
-    strcat(buf ,"DIR ");
+    strcat(buf ,_("DIR "));
   if (attr & ATTR_ARCHIVE)
-    strcat(buf ,"ARCH ");
+    strcat(buf ,_("ARCH "));
 }
 
 bool check_dentryfree(const char *buf)
@@ -152,22 +153,71 @@ bool check_dentryfree(const char *buf)
   return false;
 }
 
+  static inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+  return (n != 0 && ((n & (n - 1)) == 0));
+}
+
+static bool check_fat_bpb(struct fat_reserved_info *info)
+{
+  bool ret = false;
+
+  /* Validate this looks like a FAT filesystem BPB */
+  if (!info->BPB_RevdSecCnt) {
+    fprintf(stderr, "bogus number of reserved sectors");
+    goto out;
+  }
+  if (!info->BPB_NumFATs) {
+    fprintf(stderr, "bogus number of FAT structure");
+    goto out;
+  }
+
+  /*
+   * Earlier we checked here that b->secs_track and b->head are nonzero,
+   * but it turns out valid FAT filesystems can have zero there.
+   */
+
+  if (!fat_valid_media(info->BPB_Media)) {
+    fprintf(stderr, "invalid media value (0x%02x)", (unsigned)info->BPB_Media);
+    goto out;
+  }
+
+  if (!is_power_of_2(info->BPB_BytesPerSec)
+      || (info->BPB_BytesPerSec < 512)
+      || (info->BPB_BytesPerSec > 4096)) {
+    fprintf(stderr, "bogus logical sector size %u",
+        (unsigned)info->BPB_BytesPerSec);
+    goto out;
+  }
+
+  if (!is_power_of_2(info->BPB_SecPerClus)) {
+    fprintf(stderr, "bogus sectors per cluster %u",
+        (unsigned)info->BPB_SecPerClus);
+    goto out;
+  }
+
+  ret = true;
+out:
+  return ret;
+}
+
 int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  fprintf(out, "%-28s: %x %x %x\n", "BootStrap instruction",info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
-  fprintf(out, "%-28s: %s\n", "OEM Name", info->BS_ORMName);
-  fprintf(out, "%-28s: %u\n", "Bytes per Sector", info->BPB_BytesPerSec);
-  fprintf(out, "%-28s: %u\n", "Sectors per cluster", info->BPB_SecPerClus);
-  fprintf(out, "%-28s: %u\n", "Reserved Sector", info->BPB_RevdSecCnt);
-  fprintf(out, "%-28s: %u\n", "FAT count", info->BPB_NumFATs);
-  fprintf(out, "%-28s: %u\n", "Root Directory entry count", info->BPB_RootEntCnt);
-  fprintf(out, "%-28s: %u\n", "Sector count in Volume", info->BPB_TotSec16);
-  fprintf(out, "%-28s: %u\n", "Media", info->BPB_Media);
-  fprintf(out, "%-28s: %u\n", "Sector count in FAT", info->BPB_FATSz16);
-  fprintf(out, "%-28s: %u\n", "Sector count in Track", info->BPB_SecPerTrk);
-  fprintf(out, "%-28s: %u\n", "Head count", info->BPB_NumHeads);
-  fprintf(out, "%-28s: %u\n", "Hidden sector count", info->BPB_HiddSec);
-  fprintf(out, "%-28s: %u\n", "Sector count in volume", info->BPB_TotSec32);
+  fprintf(out, "%-28s\t: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
+  fprintf(out, "%-28s\t: %s\n", _("OEM Name"), info->BS_ORMName);
+  fprintf(out, "%-28s\t: %u\n", _("Bytes per Sector"), info->BPB_BytesPerSec);
+  fprintf(out, "%-28s\t: %u\n", _("Sectors per cluster"), info->BPB_SecPerClus);
+  fprintf(out, "%-28s\t: %u\n", _("Reserved Sector"), info->BPB_RevdSecCnt);
+  fprintf(out, "%-28s\t: %u\n", _("FAT count"), info->BPB_NumFATs);
+  fprintf(out, "%-28s\t: %u\n", _("Root Directory entry count"), info->BPB_RootEntCnt);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in Volume"), info->BPB_TotSec16);
+  fprintf(out, "%-28s\t: %u\n", _("Media"), info->BPB_Media);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in FAT"), info->BPB_FATSz16);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in Track"), info->BPB_SecPerTrk);
+  fprintf(out, "%-28s\t: %u\n", _("Head count"), info->BPB_NumHeads);
+  fprintf(out, "%-28s\t: %u\n", _("Hidden sector count"), info->BPB_HiddSec);
+  fprintf(out, "%-28s\t: %u\n", _("Sector count in volume"), info->BPB_TotSec32);
 }
 
 int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
@@ -189,6 +239,9 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
   __memcpy(&(info->BPB_HiddSec), buf, &offset, HiddSecSIZE);
   __memcpy(&(info->BPB_TotSec32), buf, &offset, TotSec32SIZE);
 
+  if (!check_fat_bpb(info))
+    offset = -EINVAL;
+
   return offset;
 }
 
@@ -206,25 +259,25 @@ int fat_dump_dentry(struct fat_dentry *info, FILE *out)
   fat_dateformat(&ctime, info->DIR_CrtDate);
   fat_attrformat(attrbuf, info->DIR_Attr);
 
-  fprintf(out, "%-28s: %s\n", "FileName", setcharc(info->IR_Name, ret, NameSIZE));
-  fprintf(out, "%-28s: %s\n", "File Attribute", attrbuf);
-  fprintf(out, "%-28s: %x\n", "Smaller information", info->DIR_NTRes);
+  fprintf(out, "%-28s\t: %s\n", _("FileName"), setcharc(info->IR_Name, ret, NameSIZE));
+  fprintf(out, "%-28s\t: %s\n", _("File Attribute"), attrbuf);
+  fprintf(out, "%-28s\t: %x\n", _("Smaller information"), info->DIR_NTRes);
   msec = info->DIR_CrtTimeTenth;
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Create Time (ms)",
-                1980 + ctime.tm_year, ctime.tm_mon, ctime.tm_mday,
-                ctime.tm_hour, ctime.tm_min,
-                (ctime.tm_sec * 2) + (msec / 100),
-                msec % 100);
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Access Time (ms)",
-                1980 + atime.tm_year, atime.tm_mon, atime.tm_mday,
-                atime.tm_hour, atime.tm_min, atime.tm_sec * 2, 0);
-  fprintf(out, "%-28s: %d-%02d-%02d %02d:%02d:%02d.%02d\n", "Modify Time (ms)",
-                1980 + mtime.tm_year, mtime.tm_mon, mtime.tm_mday,
-                mtime.tm_hour, mtime.tm_min, mtime.tm_sec * 2, 0);
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Create Time (ms)"),
+      1980 + ctime.tm_year, ctime.tm_mon, ctime.tm_mday,
+      ctime.tm_hour, ctime.tm_min,
+      (ctime.tm_sec * 2) + (msec / 100),
+      msec % 100);
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Access Time (ms)"),
+      1980 + atime.tm_year, atime.tm_mon, atime.tm_mday,
+      atime.tm_hour, atime.tm_min, atime.tm_sec * 2, 0);
+  fprintf(out, "%-28s\t: %d-%02d-%02d %02d:%02d:%02d.%02d\n", _("Modify Time (ms)"),
+      1980 + mtime.tm_year, mtime.tm_mon, mtime.tm_mday,
+      mtime.tm_hour, mtime.tm_min, mtime.tm_sec * 2, 0);
 
-  fprintf(out, "%-28s: %02x %02x\n", "First Sector", info->DIR_FstClusHI,
-                                                 info->DIR_FstClusLO);
-  fprintf(out, "%-28s: %x\n", "File size", info->DIR_FileSize);
+  fprintf(out, "%-28s\t: %02x %02x\n", _("First Sector"), info->DIR_FstClusHI,
+      info->DIR_FstClusLO);
+  fprintf(out, "%-28s\t: %x\n", _("File size"), info->DIR_FileSize);
 }
 
 
@@ -256,16 +309,17 @@ int fat_load_dentry(struct fat_dentry *dentry, const void *buf)
  */
 int read_file(const char *path)
 {
-  int err;
+  int err = 0;
   int secv;
+  int offset = 0;
+  size_t count = 0;
   unsigned char resv_area[RESVAREA_SIZE + 1];
+  unsigned char fsinfo_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
   unsigned char *root_area;
   unsigned char *data_area;
   FILE *fin;
   FILE *fout = stdout;
-  size_t count;
-  size_t offset = 0;
   enum FStype fstype;
   u_int16_t sector;
   u_int32_t secsPerFat;
@@ -280,21 +334,39 @@ int read_file(const char *path)
 
   struct fat_reserved_info resv_info = {0};
   struct fat_dentry dentry = {0};
+  struct fat32_fsinfo fs_info = {0};
 
   if ((fin = fopen(path, "rb")) == NULL) {
-    perror("file open error");
+    perror(_("file open error"));
     err = EXIT_FAILURE;
     goto out;
   }
 
-  count = fread(resv_area, sizeof(resv_area[0]), sizeof(resv_area), fin);
+  count = fread(resv_area, sizeof(resv_area[0]), RESVAREA_SIZE, fin);
+  if (count < RESVAREA_SIZE) {
+    perror(_("file read error"));
+    err = -EINVAL;
+    goto out;
+  }
+
   offset = fat_load_reservedinfo(&resv_info, resv_area);
+  if (offset < 0) {
+    err = -EINVAL;
+    goto out;
+  }
+
   fat_dump_reservedinfo(&resv_info, fout);
   sector = resv_info.BPB_BytesPerSec;
 
   if (is_fat32format(&resv_info)) {
+    /* RESERVED AREA */
     fat32_load_reservedinfo(&resv_info, resv_area, offset);
     fat32_dump_reservedinfo(&resv_info, fout);
+    /* FSIFNO AREA */
+    count = fread(fsinfo_area, sizeof(fsinfo_area[0]), RESVAREA_SIZE, fin);
+    fat32_load_fsinfo(&fs_info, fsinfo_area);
+    fat32_dump_fsinfo(&fs_info, fout);
+
     secsPerFat = ((struct fat32_reserved_info *)(resv_info.reserved1))->BPB_FATSz32;
     totSec = resv_info.BPB_TotSec32;
   } else {
@@ -308,16 +380,16 @@ int read_file(const char *path)
   FatSectors = secsPerFat * resv_info.BPB_NumFATs;
   RootDirStartSector = FatStartSector + FatSectors;
   RootDirSectors = (32 * resv_info.BPB_RootEntCnt + resv_info.BPB_BytesPerSec - 1)
-                   / resv_info.BPB_BytesPerSec;
+    / resv_info.BPB_BytesPerSec;
   DataStartSector = RootDirStartSector + RootDirSectors;
   DataSectors = totSec - DataStartSector;
 
-  fprintf(fout, "%-28s: %08x - %08x\n", "Fat Table Sector", FatStartSector * sector,
-          FatStartSector * sector +  FatSectors * sector - 1);
-  fprintf(fout, "%-28s: %08x - %08x\n", "Root Directory Sector", RootDirStartSector * sector,
-          RootDirStartSector * sector +  RootDirSectors * sector - 1);
-  fprintf(fout, "%-28s: %08x - %08x\n", "Data Directory Sector", DataStartSector * sector,
-          DataStartSector * sector +  DataSectors * sector - 1);
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Fat Table Sector"), FatStartSector * sector,
+      FatStartSector * sector +  FatSectors * sector - 1);
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Root Directory Sector"), RootDirStartSector * sector,
+      RootDirStartSector * sector +  RootDirSectors * sector - 1);
+  fprintf(fout, "%-28s\t: %08x - %08x\n", _("Data Directory Sector"), DataStartSector * sector,
+      DataStartSector * sector +  DataSectors * sector - 1);
 
   CountofClusters = DataSectors / resv_info.BPB_SecPerClus;
   if (CountofClusters < FAT16_CLUSTERS)
@@ -362,8 +434,12 @@ int main(int argc, char *argv[])
   int opt;
   int longindex;
   int n_files;
+  int ret = 0;
   bool infile = false;
 
+  setlocale (LC_ALL, "");
+  bindtextdomain (PACKAGE, LOCALEDIR);
+  textdomain (PACKAGE);
   /**
    * Initialize Phase.
    * parse option, argument. set flags.
@@ -391,6 +467,6 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  read_file(argv[optind]);
-  return 0;
+  ret = read_file(argv[optind]);
+  return ret;
 }

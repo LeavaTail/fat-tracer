@@ -1,0 +1,5 @@
+# List of source files which contain translatable strings.
+src/main.c
+src/fat12_common.c
+src/fat16_common.c
+src/fat32_common.c

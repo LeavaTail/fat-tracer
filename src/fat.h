@@ -14,13 +14,17 @@
  */
 #ifdef FATRACER_DEBUG
 #define fatracer_debug(fmt, ...)						\
-	do {								\
-		fprintf( stderr, "(%s: %u): %s:" fmt, \
-				__FILE__, __LINE__, __func__, ##__VA_ARGS__); \
-	} while (0)
+  do {								\
+    fprintf( stderr, "(%s: %u): %s:" fmt, \
+        __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+  } while (0)
 #else
 #define fatracer_debug(fmt, ...)	do { } while (0)
 #endif
+
+#include <libintl.h>
+#include <config.h>
+#define _(String) gettext (String)
 
 /**
  * ERROR STATUS CODE
@@ -28,7 +32,7 @@
  */
 enum
 {
-	CMDLINE_FAILURE = 1
+  CMDLINE_FAILURE = 1
 };
 
 /**
@@ -39,7 +43,7 @@ enum
  */
 enum FStype
 {
-	FAT12_FILESYSTEM = 12,
+  FAT12_FILESYSTEM = 12,
   FAT16_FILESYSTEM = 16,
   FAT32_FILESYSTEM = 32,
 };
@@ -67,12 +71,18 @@ static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_
 static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_t len)
 {
   int i;
+  memset(ret, '\0', len);
   for (i = 0; i < len; i++) {
     sprintf(ret, "%s%x", ret, buf[i]);
   }
   return ret;
 }
 
+/* media of boot sector */
+static inline int fat_valid_media(u_int8_t media)
+{
+  return 0xf8 <= media || media == 0xf0;
+}
 
 /**
  * FAT DEFINATION
@@ -163,6 +173,27 @@ struct fat32_reserved_info {
   unsigned char BS_FilSysType[FilSysTypeSIZE];
   unsigned char BS_BootCode32[BootCode32SIZE];
   unsigned char BS_BootSign[BootSignSIZE];
+};
+
+enum {
+  FSI_LeadSigSIZE = 4,
+  FSI_Reserved1SIZE = 480,
+  FSI_StrucSigSIZE = 4,
+  FSI_Free_CountSIZE = 4,
+  FSI_Nxt_FreeSIZE = 4,
+  FSI_Reserved2SIZE = 12,
+  FSI_TrailSigSIZE = 4,
+};
+
+
+struct fat32_fsinfo {
+  u_int32_t FSI_LeadSig;
+  unsigned char FSI_Reserved1[FSI_Reserved1SIZE];
+  u_int32_t FSI_StrucSig;
+  u_int32_t FSI_Free_Count;
+  u_int32_t FSI_Nxt_Free;
+  unsigned char FSI_Reserved2[FSI_Reserved2SIZE];
+  u_int32_t FSI_TrailSig;
 };
 
 enum Fat12Entry
@@ -274,5 +305,7 @@ int fat16_load_fattable(void *);
 bool is_fat32format(struct fat_reserved_info *);
 int fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
 int fat32_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
+int fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
+int fat32_load_fsinfo(struct fat32_fsinfo *, char *);
 
 #endif /*_FAT12_H */

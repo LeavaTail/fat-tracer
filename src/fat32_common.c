@@ -49,23 +49,23 @@ int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   char ret[RESVAREA_SIZE + 1] = {0};
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
 
-  fprintf(out, "%-28s: %x\n", "Sectors Per FAT table", fat32_info->BPB_FATSz32);
-  fprintf(out, "%-28s: %x%x\n", "Active flags", fat32_info->BPB_ExtFlags[0], fat32_info->BPB_ExtFlags[1]);
-  fprintf(out, "%-28s: %x %x\n", "FAT32 Volume version", fat32_info->BPB_FSVer[0], fat32_info->BPB_FSVer[1]);
-  fprintf(out, "%-28s: %x\n", "Root Directory First sector", fat32_info->BPB_RootClus);
-  fprintf(out, "%-28s: %x\n", "FSINFO sector", fat32_info->BPB_FSInfo);
-  fprintf(out, "%-28s: %x\n", "Backup Boot sector", fat32_info->BPB_BkBootSec);
-  fprintf(out, "%-28s: %x\n", "BootStrap", fat32_info->BS_DrvNum);
-  fprintf(out, "%-28s: %s\n", "Reserved(FAT32)", setcharc(fat32_info->BPB_Reserved, ret, ReservedSIZE));
-  fprintf(out, "%-28s: %x\n", "BootStrap", fat32_info->BS_DrvNum);
-  fprintf(out, "%-28s: %x\n", "Reserved",  fat32_info->BS_Reserved1);
-  fprintf(out, "%-28s: %x\n", "Boot Signature",  fat32_info->BS_BootSig);
-  fprintf(out, "%-28s: %s\n", "Volume ID", setcharx(fat32_info->BS_VolID, ret, VolIDSIZE));
-  fprintf(out, "%-28s: %s\n", "Volume Label", setcharc(fat32_info->BS_VolLab, ret, VolLabSIZE));
-  fprintf(out, "%-28s: %s\n", "FileSystem Type", setcharc(fat32_info->BS_FilSysType, ret, FilSysTypeSIZE));
-  fprintf(out, "%-28s: %s\n", "BootStrap(Dep systems)",  setcharc(fat32_info->BS_BootCode32, ret, BootCode32SIZE));
-  fprintf(out, "%-28s: %x%x\n", "Boot Signature",  fat32_info->BS_BootSign[0],
-          fat32_info->BS_BootSign[1]);
+  fprintf(out, "%-28s\t: %x\n", _("Sectors Per FAT table"), fat32_info->BPB_FATSz32);
+  fprintf(out, "%-28s\t: %x%x\n", _("Active flags"), fat32_info->BPB_ExtFlags[0], fat32_info->BPB_ExtFlags[1]);
+  fprintf(out, "%-28s\t: %x %x\n", _("FAT32 Volume version"), fat32_info->BPB_FSVer[0], fat32_info->BPB_FSVer[1]);
+  fprintf(out, "%-28s\t: %x\n", _("Root Directory First sector"), fat32_info->BPB_RootClus);
+  fprintf(out, "%-28s\t: %x\n", _("FSINFO sector"), fat32_info->BPB_FSInfo);
+  fprintf(out, "%-28s\t: %x\n", _("Backup Boot sector"), fat32_info->BPB_BkBootSec);
+  fprintf(out, "%-28s\t: %x\n", _("BootStrap"), fat32_info->BS_DrvNum);
+  fprintf(out, "%-28s\t: %s\n", _("Reserved(FAT32)"), setcharc(fat32_info->BPB_Reserved, ret, ReservedSIZE));
+  fprintf(out, "%-28s\t: %x\n", _("BootStrap"), fat32_info->BS_DrvNum);
+  fprintf(out, "%-28s\t: %x\n", _("Reserved"),  fat32_info->BS_Reserved1);
+  fprintf(out, "%-28s\t: %x\n", _("Boot Signature"),  fat32_info->BS_BootSig);
+  fprintf(out, "%-28s\t: %s\n", _("Volume ID"), setcharx(fat32_info->BS_VolID, ret, VolIDSIZE));
+  fprintf(out, "%-28s\t: %s\n", _("Volume Label"), setcharc(fat32_info->BS_VolLab, ret, VolLabSIZE));
+  fprintf(out, "%-28s\t: %s\n", _("FileSystem Type"), setcharc(fat32_info->BS_FilSysType, ret, FilSysTypeSIZE));
+  fprintf(out, "%-28s\t: %s\n", _("BootStrap(Dep systems)"),  setcharc(fat32_info->BS_BootCode32, ret, BootCode32SIZE));
+  fprintf(out, "%-28s\t: %x%x\n", _("Boot Signature"),  fat32_info->BS_BootSign[0],
+      fat32_info->BS_BootSign[1]);
 }
 
 int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)
@@ -86,4 +86,31 @@ int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
   __memcpy(&(fat32_info->BS_FilSysType), buf, &offset, FilSysTypeSIZE);
   __memcpy(&(fat32_info->BS_BootCode32), buf, &offset, BootCode32SIZE);
   __memcpy(&(fat32_info->BS_BootSign), buf, &offset, BootSignSIZE);
+}
+
+int fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
+{
+  char ret[RESVAREA_SIZE + 1] = {0};
+
+  fprintf(out, "\n%s\n", _("FSINFO"));
+
+  fprintf(out, "%-28s\t: %x\n", _("signature1"), info->FSI_LeadSig);
+  fprintf(out, "%-28s\t: %s\n", _("Reserved1"), setcharx(info->FSI_Reserved1, ret, FSI_Reserved1SIZE));
+  fprintf(out, "%-28s\t: %x\n", _("signature2"), info->FSI_StrucSig);
+  fprintf(out, "%-28s\t: %x\n", _("Free cluster count"), info->FSI_Free_Count);
+  fprintf(out, "%-28s\t: %x\n", _("last allocated cluster"), info->FSI_Nxt_Free);
+  fprintf(out, "%-28s\t: %s\n", _("Reserved2"), setcharx(info->FSI_Reserved2, ret, FSI_Reserved2SIZE));
+  fprintf(out, "%-28s\t: %x\n\n", _("signature3"), info->FSI_TrailSig);
+}
+
+int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
+{
+  size_t offset = 0;
+  __memcpy(&(info->FSI_LeadSig), buf, &offset, FSI_LeadSigSIZE);
+  __memcpy(&(info->FSI_Reserved1), buf, &offset, FSI_Reserved1SIZE);
+  __memcpy(&(info->FSI_StrucSig), buf, &offset, FSI_StrucSigSIZE);
+  __memcpy(&(info->FSI_Free_Count), buf, &offset, FSI_Free_CountSIZE);
+  __memcpy(&(info->FSI_Nxt_Free), buf, &offset, FSI_Nxt_FreeSIZE);
+  __memcpy(&(info->FSI_Reserved2), buf, &offset, FSI_Reserved2SIZE);
+  __memcpy(&(info->FSI_TrailSig), buf, &offset, FSI_TrailSigSIZE);
 }

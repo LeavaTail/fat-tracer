@@ -1,0 +1,254 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the fatracer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: fatracer 0.1\n"
+"Report-Msgid-Bugs-To: starbow.duster@gmail.com\n"
+"POT-Creation-Date: 2019-10-19 20:08+0900\n"
+"PO-Revision-Date: 2019-10-17 00:10+0900\n"
+"Last-Translator: LeavaTail <starbow.duster@gmail.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/main.c:75
+#, c-format
+msgid "Usage: %s [OPTION]... [FILE]\n"
+msgstr "使用法: %s [オプション]... [ファイル]\n"
+
+#: src/main.c:93
+#, c-format
+msgid "Written by %s.\n"
+msgstr "作者 %s。\n"
+
+#: src/main.c:129
+msgid "LFN "
+msgstr "LFN "
+
+#: src/main.c:134
+msgid "RO "
+msgstr "RO "
+
+#: src/main.c:136
+msgid "HIDDEN "
+msgstr "HIDDEN "
+
+#: src/main.c:138
+msgid "SYS "
+msgstr "SYS "
+
+#: src/main.c:140
+msgid "VOLUME "
+msgstr "VOLUME "
+
+#: src/main.c:142
+msgid "DIR "
+msgstr "DIR "
+
+#: src/main.c:144
+msgid "ARCH "
+msgstr "ARCH "
+
+#: src/main.c:207
+msgid "BootStrap instruction"
+msgstr "ブートストラップ\t"
+
+#: src/main.c:208
+msgid "OEM Name"
+msgstr "ＯＥＭ名"
+
+#: src/main.c:209
+msgid "Bytes per Sector"
+msgstr "１セクタのバイト数\t"
+
+#: src/main.c:210
+msgid "Sectors per cluster"
+msgstr "１クラスタのセクタ数\t"
+
+#: src/main.c:211
+msgid "Reserved Sector"
+msgstr "予約領域のセクタ数\t"
+
+#: src/main.c:212
+msgid "FAT count"
+msgstr "ＦＡＴテーブルの個数\t"
+
+#: src/main.c:213
+msgid "Root Directory entry count"
+msgstr "ルートディレクトリのエントリ数"
+
+#: src/main.c:214
+msgid "Sector count in Volume"
+msgstr "ボリュームのセクタ総数\t"
+
+#: src/main.c:215
+msgid "Media"
+msgstr "メディアのタイプ\t"
+
+#: src/main.c:216
+msgid "Sector count in FAT"
+msgstr "ＦＡＴテーブルのセクタ数"
+
+#: src/main.c:217
+msgid "Sector count in Track"
+msgstr "１トラック当たりのセクタ数"
+
+#: src/main.c:218
+msgid "Head count"
+msgstr "ヘッド数"
+
+#: src/main.c:219
+msgid "Hidden sector count"
+msgstr "隠れた物理セクタ数\t"
+
+#: src/main.c:220
+msgid "Sector count in volume"
+msgstr "ボリュームの総セクタ数\t"
+
+#: src/main.c:262
+msgid "FileName"
+msgstr "ファイル名\t"
+
+#: src/main.c:263
+msgid "File Attribute"
+msgstr "属性\t"
+
+#: src/main.c:264
+msgid "Smaller information"
+msgstr "小文字情報\t"
+
+#: src/main.c:266
+msgid "Create Time (ms)"
+msgstr "作成時刻（ｍｓ）\t"
+
+#: src/main.c:271
+msgid "Access Time (ms)"
+msgstr "参照時間（ｍｓ）\t"
+
+#: src/main.c:274
+msgid "Modify Time (ms)"
+msgstr "更新時間（ｍｓ）\t"
+
+#: src/main.c:278
+msgid "First Sector"
+msgstr "先頭セクタ\t"
+
+#: src/main.c:280
+msgid "File size"
+msgstr "ファイルサイズ\t\t"
+
+#: src/main.c:340
+msgid "file open error"
+msgstr "ファイルのオープンエラー"
+
+#: src/main.c:347
+msgid "file read error"
+msgstr "ファイルの読み込みエラー"
+
+#: src/main.c:387
+msgid "Fat Table Sector"
+msgstr "FATテーブルのセクタ\t"
+
+#: src/main.c:389
+msgid "Root Directory Sector"
+msgstr "ルートディレクトリのセクタ"
+
+#: src/main.c:391
+msgid "Data Directory Sector"
+msgstr "データ領域のセクタ\t"
+
+#: src/fat12_common.c:47 src/fat32_common.c:58 src/fat32_common.c:60
+msgid "BootStrap"
+msgstr "ブートストラップ\t"
+
+#: src/fat12_common.c:48 src/fat32_common.c:61
+msgid "Reserved"
+msgstr "予約領域\t"
+
+#: src/fat12_common.c:49 src/fat12_common.c:54 src/fat32_common.c:62
+#: src/fat32_common.c:67
+msgid "Boot Signature"
+msgstr "ブートシグネチャ\t"
+
+#: src/fat12_common.c:50 src/fat32_common.c:63
+msgid "Volume ID"
+msgstr "ボリュームシリアル番号\t"
+
+#: src/fat12_common.c:51 src/fat32_common.c:64
+msgid "Volume Label"
+msgstr "ボリュームラベル\t"
+
+#: src/fat12_common.c:52 src/fat32_common.c:65
+msgid "FileSystem Type"
+msgstr "ファイルシステムタイプ\t"
+
+#: src/fat12_common.c:53 src/fat32_common.c:66
+msgid "BootStrap(Dep systems)"
+msgstr "システム依存フィールド\t"
+
+#: src/fat32_common.c:52
+msgid "Sectors Per FAT table"
+msgstr "ＦＡＴテーブル当たりのセクタ数\t"
+
+#: src/fat32_common.c:53
+msgid "Active flags"
+msgstr "フラグ"
+
+#: src/fat32_common.c:54
+msgid "FAT32 Volume version"
+msgstr "ＦＡＴ３２ボリュームのバージョン"
+
+#: src/fat32_common.c:55
+msgid "Root Directory First sector"
+msgstr "ルートディレクトリの先頭セクタ番号"
+
+#: src/fat32_common.c:56
+msgid "FSINFO sector"
+msgstr "ＦＡＳＩＮＦＯの先頭セクタ"
+
+#: src/fat32_common.c:57
+msgid "Backup Boot sector"
+msgstr "ブートセクタのバックアップ先のセクタ番号"
+
+#: src/fat32_common.c:59
+msgid "Reserved(FAT32)"
+msgstr "ＦＡＴ３２用の予約領域"
+
+#: src/fat32_common.c:95
+msgid "FSINFO"
+msgstr "ＦＳＩＮＦＯ"
+
+#: src/fat32_common.c:97
+msgid "signature1"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"
+
+#: src/fat32_common.c:98
+msgid "Reserved1"
+msgstr "予約領域"
+
+#: src/fat32_common.c:99
+msgid "signature2"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"
+
+#: src/fat32_common.c:100
+msgid "Free cluster count"
+msgstr "空きクラスタ数"
+
+#: src/fat32_common.c:101
+msgid "last allocated cluster"
+msgstr "最後に割り当てられたクラスタ番号"
+
+#: src/fat32_common.c:102
+msgid "Reserved2"
+msgstr "予約領域"
+
+#: src/fat32_common.c:103
+msgid "signature3"
+msgstr "ＦＳＩＮＦＯセクタ用のシグネチャ"
