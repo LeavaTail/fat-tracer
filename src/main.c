@@ -348,13 +348,13 @@ int read_file(const char *path)
   if (count < RESVAREA_SIZE) {
     perror(_("file read error"));
     err = -EINVAL;
-    goto out;
+    goto fin_end;
   }
 
   offset = fat_load_reservedinfo(&resv_info, resv_area);
   if (offset < 0) {
     err = -EINVAL;
-    goto out;
+    goto fin_end;
   }
 
   fat_dump_reservedinfo(&resv_info, fout);
