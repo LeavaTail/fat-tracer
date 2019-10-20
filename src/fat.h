@@ -53,6 +53,7 @@ static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t
   size_t o = *offset;
   memcpy(dist, src + o, n);
   *offset += n;
+  return dist;
 }
 
 static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_t len)
@@ -292,22 +293,22 @@ enum {
 /**
  * FAT12 structure
  */
-int fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+void fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
 int fat12_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
 
 /**
  * FAT16 structure
  */
-int fat16_dump_fattable(void *);
+void fat16_dump_fattable(void *);
 int fat16_load_fattable(void *);
 
 /**
  * FAT32 structure
  */
 bool is_fat32format(struct fat_reserved_info *);
-int fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+void fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
 int fat32_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
-int fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
+void fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
 int fat32_load_fsinfo(struct fat32_fsinfo *, char *);
 
 #endif /*_FAT12_H */

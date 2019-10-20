@@ -93,7 +93,7 @@ void version(const char *command_name, const char *version,
   fprintf(out, _("Written by %s.\n"), author);
 }
 
-int fat_dateformat(struct tm *t, u_int16_t date)
+void fat_dateformat(struct tm *t, u_int16_t date)
 {
   unsigned char y;
   unsigned char m;
@@ -108,7 +108,7 @@ int fat_dateformat(struct tm *t, u_int16_t date)
   t->tm_mday = d;
 }
 
-int fat_timeformat(struct tm *t, u_int16_t time)
+void fat_timeformat(struct tm *t, u_int16_t time)
 {
   unsigned char h;
   unsigned char m;
@@ -142,6 +142,8 @@ int fat_attrformat(char *buf, unsigned char attr)
     strcat(buf ,_("DIR "));
   if (attr & ATTR_ARCHIVE)
     strcat(buf ,_("ARCH "));
+
+  return 0;
 }
 
 bool check_dentryfree(const char *buf)
@@ -202,7 +204,7 @@ out:
   return ret;
 }
 
-int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
+void fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   fprintf(out, "%-28s\t: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
   fprintf(out, "%-28s\t: %s\n", _("OEM Name"), info->BS_ORMName);
@@ -245,7 +247,7 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
   return offset;
 }
 
-int fat_dump_dentry(struct fat_dentry *info, FILE *out)
+void fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
   char attrbuf[ATTR_ONELINE] = {0};
   char ret[DENTRY_SIZE + 1] = {0};

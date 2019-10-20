@@ -39,7 +39,7 @@
 
 #include "fat.h"
 
-int fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
+void fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   char ret[RESVAREA_SIZE + 1] = {0};
   struct fat12_reserved_info *fat12_info = (struct fat12_reserved_info *)(info->reserved1);
@@ -66,4 +66,6 @@ int fat12_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
   __memcpy(&(fat12_info->BS_FilSysType), buf, &offset, FilSysTypeSIZE);
   __memcpy(&(fat12_info->BS_BootCode), buf, &offset, BootCodeSIZE);
   __memcpy(&(fat12_info->BS_BootSign), buf, &offset, BootSignSIZE);
+
+  return offset;
 }

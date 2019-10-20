@@ -44,7 +44,7 @@ bool is_fat32format(struct fat_reserved_info *info)
   return !info->BPB_FATSz16;
 }
 
-int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
+void fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   char ret[RESVAREA_SIZE + 1] = {0};
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
@@ -86,9 +86,11 @@ int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
   __memcpy(&(fat32_info->BS_FilSysType), buf, &offset, FilSysTypeSIZE);
   __memcpy(&(fat32_info->BS_BootCode32), buf, &offset, BootCode32SIZE);
   __memcpy(&(fat32_info->BS_BootSign), buf, &offset, BootSignSIZE);
+
+  return offset;
 }
 
-int fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
+void fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
 {
   char ret[RESVAREA_SIZE + 1] = {0};
 
@@ -113,4 +115,6 @@ int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
   __memcpy(&(info->FSI_Nxt_Free), buf, &offset, FSI_Nxt_FreeSIZE);
   __memcpy(&(info->FSI_Reserved2), buf, &offset, FSI_Reserved2SIZE);
   __memcpy(&(info->FSI_TrailSig), buf, &offset, FSI_TrailSigSIZE);
+
+  return offset;
 }
