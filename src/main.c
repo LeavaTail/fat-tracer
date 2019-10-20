@@ -366,6 +366,11 @@ int read_file(const char *path)
     fat32_dump_reservedinfo(&resv_info, fout);
     /* FSIFNO AREA */
     count = fread(fsinfo_area, sizeof(fsinfo_area[0]), RESVAREA_SIZE, fin);
+    if (count < RESVAREA_SIZE) {
+      perror(_("file read error"));
+      err = -EINVAL;
+      goto fin_end;
+    }
     fat32_load_fsinfo(&fs_info, fsinfo_area);
     fat32_dump_fsinfo(&fs_info, fout);
 
@@ -415,6 +420,8 @@ int read_file(const char *path)
   fseek(fin, RootDirStartSector * sector, SEEK_SET);
   for(secv = 0; secv < RootDirSectors * sector; secv += sizeof(struct fat_dentry)) {
     count = fread(root_area, sizeof(root_area[0]), sizeof(struct fat_dentry), fin);
+    if (count < sizeof(struct fat_dentry))
+      break;
     if (check_dentryfree(root_area))
       continue;
     fat_load_dentry(&dentry, root_area);
