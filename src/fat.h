@@ -60,10 +60,10 @@ static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_
   int i;
   memset(ret, '\0', len);
   for (i = 0; i < len; i++) {
+    char tmp[1 + 1] = ".\0";
     if (buf[i] >= 0x20 && buf[i] <= 0x7e)
-      sprintf(ret, "%s%c", ret, buf[i]);
-    else
-      strcat(ret, ".");
+      sprintf(tmp, "%c", buf[i]);
+    strcat(ret, tmp);
   }
   return ret;
 }
@@ -71,9 +71,11 @@ static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_
 static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_t len)
 {
   int i;
+  char tmp[2 + 1] = "\0";
   memset(ret, '\0', len);
   for (i = 0; i < len; i++) {
-    sprintf(ret, "%s%x", ret, buf[i]);
+    sprintf(tmp, "%x", buf[i]);
+    strcat(ret, tmp);
   }
   return ret;
 }
