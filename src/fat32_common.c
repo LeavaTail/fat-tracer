@@ -68,7 +68,7 @@ void fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
       fat32_info->BS_BootSign[1]);
 }
 
-int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)
+int fat32_load_reservedinfo(struct fat_reserved_info *info, unsigned char *buf, size_t offset)
 {
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
   __memcpy(&(fat32_info->BPB_FATSz32), buf, &offset, FATSz32SIZE);
@@ -105,7 +105,7 @@ void fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
   fprintf(out, "%-28s\t: %x\n\n", _("signature3"), info->FSI_TrailSig);
 }
 
-int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
+int fat32_load_fsinfo(struct fat32_fsinfo *info, unsigned char *buf)
 {
   size_t offset = 0;
   __memcpy(&(info->FSI_LeadSig), buf, &offset, FSI_LeadSigSIZE);

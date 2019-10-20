@@ -123,7 +123,7 @@ void fat_timeformat(struct tm *t, u_int16_t time)
   t->tm_hour = h;
 }
 
-int fat_attrformat(char *buf, unsigned char attr)
+int fat_attrformat(unsigned char *buf, unsigned char attr)
 {
   if (attr & ATTR_LONG_FILE_NAME) {
     strcat(buf ,_("LFN "));
@@ -222,7 +222,7 @@ void fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   fprintf(out, "%-28s\t: %u\n", _("Sector count in volume"), info->BPB_TotSec32);
 }
 
-int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
+int fat_load_reservedinfo(struct fat_reserved_info *info, unsigned char *buf)
 {
   size_t offset = 0;
 
@@ -249,7 +249,7 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
 
 void fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
-  char attrbuf[ATTR_ONELINE] = {0};
+  unsigned char attrbuf[ATTR_ONELINE] = {0};
   unsigned char ret[DENTRY_SIZE + 1] = {0};
   struct tm mtime, atime, ctime;
   u_int16_t msec = 0;

@@ -55,7 +55,7 @@ void fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
       fat12_info->BS_BootSign[1]);
 }
 
-int fat12_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)
+int fat12_load_reservedinfo(struct fat_reserved_info *info, unsigned char *buf, size_t offset)
 {
   struct fat12_reserved_info *fat12_info = (struct fat12_reserved_info *)(info->reserved1);
   __memcpy(&(fat12_info->BS_DrvNum), buf, &offset, DrvNumSIZE);
