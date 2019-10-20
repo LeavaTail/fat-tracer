@@ -250,7 +250,7 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
 void fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
   char attrbuf[ATTR_ONELINE] = {0};
-  char ret[DENTRY_SIZE + 1] = {0};
+  unsigned char ret[DENTRY_SIZE + 1] = {0};
   struct tm mtime, atime, ctime;
   u_int16_t msec = 0;
 

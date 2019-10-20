@@ -48,7 +48,8 @@ enum FStype
   FAT32_FILESYSTEM = 32,
 };
 
-static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t n)
+static inline char *__memcpy(void *dist, const char *src,
+                             size_t *offset, size_t n)
 {
   size_t o = *offset;
   memcpy(dist, src + o, n);
@@ -56,7 +57,8 @@ static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t
   return dist;
 }
 
-static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_t len)
+static inline unsigned char *setcharc(unsigned const char* buf,
+                                      unsigned char* ret, size_t len)
 {
   int i;
   memset(ret, '\0', len);
@@ -69,7 +71,8 @@ static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_
   return ret;
 }
 
-static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_t len)
+static inline unsigned char *setcharx(unsigned const char* buf,
+                                      unsigned char* ret, size_t len)
 {
   int i;
   char tmp[2 + 1] = "\0";

@@ -46,7 +46,7 @@ bool is_fat32format(struct fat_reserved_info *info)
 
 void fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  char ret[RESVAREA_SIZE + 1] = {0};
+  unsigned char ret[RESVAREA_SIZE + 1] = {0};
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
 
   fprintf(out, "%-28s\t: %x\n", _("Sectors Per FAT table"), fat32_info->BPB_FATSz32);
@@ -92,7 +92,7 @@ int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
 
 void fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
 {
-  char ret[RESVAREA_SIZE + 1] = {0};
+  unsigned char ret[RESVAREA_SIZE + 1] = {0};
 
   fprintf(out, "\n%s\n", _("FSINFO"));
 

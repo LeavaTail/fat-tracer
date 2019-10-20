@@ -41,7 +41,7 @@
 
 void fat12_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  char ret[RESVAREA_SIZE + 1] = {0};
+  unsigned char ret[RESVAREA_SIZE + 1] = {0};
   struct fat12_reserved_info *fat12_info = (struct fat12_reserved_info *)(info->reserved1);
 
   fprintf(out, "%-28s\t: %x\n", _("BootStrap"), fat12_info->BS_DrvNum);
