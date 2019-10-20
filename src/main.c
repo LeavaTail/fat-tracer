@@ -404,7 +404,11 @@ int read_file(const char *path)
   fat_area = malloc(FatSectors * sector);
   fseek(fin, FatStartSector * sector ,SEEK_SET);
   count = fread(fat_area, sizeof(fat_area[0]), FatSectors * sector, fin);
-  free(fat_area);
+  if (count < FatStartSector * sector) {
+    perror(_("file read error"));
+    err = -EINVAL;
+    goto fat_end;
+  }
 
   fprintf(fout, "\n%s:\n", "/");
   root_area = malloc(sizeof(struct fat_dentry) + 1);
@@ -418,8 +422,8 @@ int read_file(const char *path)
     putchar('\n');
   }
   free(root_area);
-
-
+fat_end:
+  free(fat_area);
 fin_end:
   fclose(fin);
 out:
