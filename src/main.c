@@ -319,7 +319,6 @@ int read_file(const char *path)
   unsigned char fsinfo_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
   unsigned char *root_area;
-  unsigned char *data_area;
   FILE *fin;
   FILE *fout = stdout;
   enum FStype fstype;
@@ -448,7 +447,6 @@ int main(int argc, char *argv[])
   int longindex;
   int n_files;
   int ret = 0;
-  bool infile = false;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
