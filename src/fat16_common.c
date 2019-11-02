@@ -41,12 +41,14 @@
 
 int fat16_check_fattable(void *area)
 {
+  return 0;
 }
 
-int fat16_dump_fattable(void *area)
+void fat16_dump_fattable(void *area)
 {
 }
 
 int fat16_load_fattable(void *area)
 {
+  return 0;
 }

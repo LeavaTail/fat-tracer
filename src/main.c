@@ -93,7 +93,7 @@ void version(const char *command_name, const char *version,
   fprintf(out, _("Written by %s.\n"), author);
 }
 
-int fat_dateformat(struct tm *t, u_int16_t date)
+void fat_dateformat(struct tm *t, u_int16_t date)
 {
   unsigned char y;
   unsigned char m;
@@ -108,7 +108,7 @@ int fat_dateformat(struct tm *t, u_int16_t date)
   t->tm_mday = d;
 }
 
-int fat_timeformat(struct tm *t, u_int16_t time)
+void fat_timeformat(struct tm *t, u_int16_t time)
 {
   unsigned char h;
   unsigned char m;
@@ -123,7 +123,7 @@ int fat_timeformat(struct tm *t, u_int16_t time)
   t->tm_hour = h;
 }
 
-int fat_attrformat(char *buf, unsigned char attr)
+int fat_attrformat(unsigned char *buf, unsigned char attr)
 {
   if (attr & ATTR_LONG_FILE_NAME) {
     strcat(buf ,_("LFN "));
@@ -142,6 +142,8 @@ int fat_attrformat(char *buf, unsigned char attr)
     strcat(buf ,_("DIR "));
   if (attr & ATTR_ARCHIVE)
     strcat(buf ,_("ARCH "));
+
+  return 0;
 }
 
 bool check_dentryfree(const char *buf)
@@ -202,7 +204,7 @@ out:
   return ret;
 }
 
-int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
+void fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
   fprintf(out, "%-28s\t: %x %x %x\n", _("BootStrap instruction"),info->BS_JmpBoot[0], info->BS_JmpBoot[1], info->BS_JmpBoot[2]);
   fprintf(out, "%-28s\t: %s\n", _("OEM Name"), info->BS_ORMName);
@@ -220,7 +222,7 @@ int fat_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
   fprintf(out, "%-28s\t: %u\n", _("Sector count in volume"), info->BPB_TotSec32);
 }
 
-int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
+int fat_load_reservedinfo(struct fat_reserved_info *info, unsigned char *buf)
 {
   size_t offset = 0;
 
@@ -245,10 +247,10 @@ int fat_load_reservedinfo(struct fat_reserved_info *info, char *buf)
   return offset;
 }
 
-int fat_dump_dentry(struct fat_dentry *info, FILE *out)
+void fat_dump_dentry(struct fat_dentry *info, FILE *out)
 {
-  char attrbuf[ATTR_ONELINE] = {0};
-  char ret[DENTRY_SIZE + 1] = {0};
+  unsigned char attrbuf[ATTR_ONELINE] = {0};
+  unsigned char ret[DENTRY_SIZE + 1] = {0};
   struct tm mtime, atime, ctime;
   u_int16_t msec = 0;
 
@@ -317,7 +319,6 @@ int read_file(const char *path)
   unsigned char fsinfo_area[RESVAREA_SIZE + 1];
   unsigned char *fat_area;
   unsigned char *root_area;
-  unsigned char *data_area;
   FILE *fin;
   FILE *fout = stdout;
   enum FStype fstype;
@@ -346,13 +347,13 @@ int read_file(const char *path)
   if (count < RESVAREA_SIZE) {
     perror(_("file read error"));
     err = -EINVAL;
-    goto out;
+    goto fin_end;
   }
 
   offset = fat_load_reservedinfo(&resv_info, resv_area);
   if (offset < 0) {
     err = -EINVAL;
-    goto out;
+    goto fin_end;
   }
 
   fat_dump_reservedinfo(&resv_info, fout);
@@ -364,6 +365,11 @@ int read_file(const char *path)
     fat32_dump_reservedinfo(&resv_info, fout);
     /* FSIFNO AREA */
     count = fread(fsinfo_area, sizeof(fsinfo_area[0]), RESVAREA_SIZE, fin);
+    if (count < RESVAREA_SIZE) {
+      perror(_("file read error"));
+      err = -EINVAL;
+      goto fin_end;
+    }
     fat32_load_fsinfo(&fs_info, fsinfo_area);
     fat32_dump_fsinfo(&fs_info, fout);
 
@@ -402,13 +408,19 @@ int read_file(const char *path)
   fat_area = malloc(FatSectors * sector);
   fseek(fin, FatStartSector * sector ,SEEK_SET);
   count = fread(fat_area, sizeof(fat_area[0]), FatSectors * sector, fin);
-  free(fat_area);
+  if (count < FatStartSector * sector) {
+    perror(_("file read error"));
+    err = -EINVAL;
+    goto fat_end;
+  }
 
   fprintf(fout, "\n%s:\n", "/");
   root_area = malloc(sizeof(struct fat_dentry) + 1);
   fseek(fin, RootDirStartSector * sector, SEEK_SET);
   for(secv = 0; secv < RootDirSectors * sector; secv += sizeof(struct fat_dentry)) {
     count = fread(root_area, sizeof(root_area[0]), sizeof(struct fat_dentry), fin);
+    if (count < sizeof(struct fat_dentry))
+      break;
     if (check_dentryfree(root_area))
       continue;
     fat_load_dentry(&dentry, root_area);
@@ -416,8 +428,8 @@ int read_file(const char *path)
     putchar('\n');
   }
   free(root_area);
-
-
+fat_end:
+  free(fat_area);
 fin_end:
   fclose(fin);
 out:
@@ -435,7 +447,6 @@ int main(int argc, char *argv[])
   int longindex;
   int n_files;
   int ret = 0;
-  bool infile = false;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);

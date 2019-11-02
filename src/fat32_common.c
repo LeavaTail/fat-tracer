@@ -44,9 +44,9 @@ bool is_fat32format(struct fat_reserved_info *info)
   return !info->BPB_FATSz16;
 }
 
-int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
+void fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
 {
-  char ret[RESVAREA_SIZE + 1] = {0};
+  unsigned char ret[RESVAREA_SIZE + 1] = {0};
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
 
   fprintf(out, "%-28s\t: %x\n", _("Sectors Per FAT table"), fat32_info->BPB_FATSz32);
@@ -68,7 +68,7 @@ int fat32_dump_reservedinfo(struct fat_reserved_info *info, FILE *out)
       fat32_info->BS_BootSign[1]);
 }
 
-int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t offset)
+int fat32_load_reservedinfo(struct fat_reserved_info *info, unsigned char *buf, size_t offset)
 {
   struct fat32_reserved_info *fat32_info = (struct fat32_reserved_info *)(info->reserved1);
   __memcpy(&(fat32_info->BPB_FATSz32), buf, &offset, FATSz32SIZE);
@@ -86,11 +86,13 @@ int fat32_load_reservedinfo(struct fat_reserved_info *info, char *buf, size_t of
   __memcpy(&(fat32_info->BS_FilSysType), buf, &offset, FilSysTypeSIZE);
   __memcpy(&(fat32_info->BS_BootCode32), buf, &offset, BootCode32SIZE);
   __memcpy(&(fat32_info->BS_BootSign), buf, &offset, BootSignSIZE);
+
+  return offset;
 }
 
-int fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
+void fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
 {
-  char ret[RESVAREA_SIZE + 1] = {0};
+  unsigned char ret[RESVAREA_SIZE + 1] = {0};
 
   fprintf(out, "\n%s\n", _("FSINFO"));
 
@@ -103,7 +105,7 @@ int fat32_dump_fsinfo(struct fat32_fsinfo *info, FILE *out)
   fprintf(out, "%-28s\t: %x\n\n", _("signature3"), info->FSI_TrailSig);
 }
 
-int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
+int fat32_load_fsinfo(struct fat32_fsinfo *info, unsigned char *buf)
 {
   size_t offset = 0;
   __memcpy(&(info->FSI_LeadSig), buf, &offset, FSI_LeadSigSIZE);
@@ -113,4 +115,6 @@ int fat32_load_fsinfo(struct fat32_fsinfo *info, char *buf)
   __memcpy(&(info->FSI_Nxt_Free), buf, &offset, FSI_Nxt_FreeSIZE);
   __memcpy(&(info->FSI_Reserved2), buf, &offset, FSI_Reserved2SIZE);
   __memcpy(&(info->FSI_TrailSig), buf, &offset, FSI_TrailSigSIZE);
+
+  return offset;
 }

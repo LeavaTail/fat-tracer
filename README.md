@@ -58,16 +58,16 @@ File size                   : 0
 
 ## Requirement
 
-- Autoconf  <http://www.gnu.org/software/autoconf/>
-- Automake  <http://www.gnu.org/software/automake/>
-- Git       <http://git.or.cz/>
+  - Autoconf <http://www.gnu.org/software/autoconf/>
+  - Automake <http://www.gnu.org/software/automake/>
+  - Git      <http://git.or.cz/>
 
 ## Installation
 
-1. Generate configure file. `./script/bootstrap.sh`
-2. Configure the package for your system. `./configure`
-3. Compile the package. `make`
-4. Install the program. `make install`
+  1. Generate configure file. `./script/bootstrap.sh`
+  2. Configure the package for your system. `./configure`
+  3. Compile the package. `make`
+  4. Install the program. `make install`
 
 ## Authors
 

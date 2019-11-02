@@ -48,32 +48,38 @@ enum FStype
   FAT32_FILESYSTEM = 32,
 };
 
-static inline char *__memcpy(void *dist, const char *src, size_t *offset, size_t n)
+static inline char *__memcpy(void *dist, unsigned const char *src,
+                             size_t *offset, size_t n)
 {
   size_t o = *offset;
   memcpy(dist, src + o, n);
   *offset += n;
+  return dist;
 }
 
-static inline char *setcharc(unsigned const char* buf, unsigned char* ret, size_t len)
+static inline unsigned char *setcharc(unsigned const char* buf,
+                                      unsigned char* ret, size_t len)
 {
   int i;
   memset(ret, '\0', len);
   for (i = 0; i < len; i++) {
+    unsigned char tmp[1 + 1] = ".\0";
     if (buf[i] >= 0x20 && buf[i] <= 0x7e)
-      sprintf(ret, "%s%c", ret, buf[i]);
-    else
-      strcat(ret, ".");
+      sprintf(tmp, "%c", buf[i]);
+    strcat(ret, tmp);
   }
   return ret;
 }
 
-static inline char *setcharx(unsigned const char* buf, unsigned char* ret, size_t len)
+static inline unsigned char *setcharx(unsigned const char* buf,
+                                      unsigned char* ret, size_t len)
 {
   int i;
+  unsigned char tmp[2 + 1] = "\0";
   memset(ret, '\0', len);
   for (i = 0; i < len; i++) {
-    sprintf(ret, "%s%x", ret, buf[i]);
+    sprintf(tmp, "%x", buf[i]);
+    strcat(ret, tmp);
   }
   return ret;
 }
@@ -290,22 +296,22 @@ enum {
 /**
  * FAT12 structure
  */
-int fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
-int fat12_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
+void fat12_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+int fat12_load_reservedinfo(struct fat_reserved_info *, unsigned char *, size_t);
 
 /**
  * FAT16 structure
  */
-int fat16_dump_fattable(void *);
+void fat16_dump_fattable(void *);
 int fat16_load_fattable(void *);
 
 /**
  * FAT32 structure
  */
 bool is_fat32format(struct fat_reserved_info *);
-int fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
-int fat32_load_reservedinfo(struct fat_reserved_info *, char *, size_t);
-int fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
-int fat32_load_fsinfo(struct fat32_fsinfo *, char *);
+void fat32_dump_reservedinfo(struct fat_reserved_info *, FILE *);
+int fat32_load_reservedinfo(struct fat_reserved_info *, unsigned char *, size_t);
+void fat32_dump_fsinfo(struct fat32_fsinfo *, FILE *);
+int fat32_load_fsinfo(struct fat32_fsinfo *, unsigned char *);
 
 #endif /*_FAT12_H */
